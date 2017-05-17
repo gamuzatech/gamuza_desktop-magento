@@ -14,7 +14,7 @@ Construa aplicações desktop poderosas utilizando a simplicidade do motor gráf
 
     $ cd /path/to/magento
     $ modgit init
-    $ modgit add gamuza_desktop https://github.com/gamuzabrasil/gamuza_desktop-magento.git
+    $ modgit add gamuza_desktop https://github.com/gamuzatech/gamuza_desktop-magento.git
 
 **Instalação manual dos arquivos**
 
