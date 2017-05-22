@@ -291,7 +291,7 @@ class TObject
             if (empty ($methodName)) return false;
 
             // Retrieve arguments from stack
-            $stack_args = null;
+            $stack_args = array ();
             $stack = debug_backtrace();
             foreach ($stack as $element)
             {

@@ -42,6 +42,7 @@ abstract class TObject extends System\TObject
      */
     public $OnCreate;
     public $OnDestroy;
+    public $OnLoaded;
 
     public function __construct ()
     {

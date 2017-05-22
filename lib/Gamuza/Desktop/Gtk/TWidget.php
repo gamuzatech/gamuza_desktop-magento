@@ -842,7 +842,18 @@ abstract class TWidget extends TObject
 
     public function SetVisible (bool $visible, /* bool */ $all = true)
     {
-        return $this->Handle->set_visible ($visible, $all);
+        if ($visible)
+        {
+            if ($all) $this->ShowAll ();
+            else $this->Show ();
+        }
+        else
+        {
+            if ($all) $this->HideAll ();
+            else $this->Hide ();
+        }
+
+        // return $this->Handle->set_visible ($visible, $all);
     }
 
     public function ShapeCombineMask ($shape_mask, $offset_x, $offset_y)

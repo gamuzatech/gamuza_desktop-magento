@@ -94,6 +94,8 @@ class TApplication extends TObject
         $this->LoadDfmFile ($windowClassName, $reference);
 
         if (!$this->MainForm) $this->MainForm = $reference;
+
+        $this->_call_user_func ($reference, $reference->OnLoaded);
     }
 
     public function CreateWidget ($klass, & $reference)
@@ -117,6 +119,8 @@ class TApplication extends TObject
         $this->LoadDfmFile ($windowClassName, $reference);
 
         if (!$this->MainWindow) $this->MainWindow = $reference;
+
+        $this->_call_user_func ($reference, $reference->OnLoaded);
     }
 
     public function EventsPending ()
@@ -219,7 +223,7 @@ class TApplication extends TObject
 
     public function MessageBox (
         string $text, string $caption,
-        TButtonsType $buttons, TMessageType $style,
+        TButtonsType $buttons = null, TMessageType $style = null,
         TButtonsType $default = null, TButtonsType $escape = null
     )
     {
@@ -352,6 +356,11 @@ class TApplication extends TObject
         {
             $parent->PackStart ($object, true);
         }
+
+        /**
+         * Always show widgets
+         */
+        $object->Show ();
 
         /**
          * Parse remaining

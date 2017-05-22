@@ -141,6 +141,12 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
 
             break;
         }
+        case 'files':
+        {
+            $dir .= DS . 'files';
+
+            break;
+        }
         }
 
         $dir = str_replace ('/', DS, $dir);

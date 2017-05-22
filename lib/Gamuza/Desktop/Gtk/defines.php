@@ -281,7 +281,7 @@
     define ('mdrPrev',   Gtk::MENU_DIR_PREV);
 }
 
-// enum TMessageStyle
+// enum TMessageType
 {
     define ('msgInfo',     Gtk::MESSAGE_INFO);
     define ('msgWarning',  Gtk::MESSAGE_WARNING);

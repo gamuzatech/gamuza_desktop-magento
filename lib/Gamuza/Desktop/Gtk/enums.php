@@ -282,7 +282,7 @@ abstract class TMenuDirectionType
     const mdrPrev   = Gtk::MENU_DIR_PREV;
 }
 
-abstract class TMessageStyle
+abstract class TMessageType
 {
     const msgInfo     = Gtk::MESSAGE_INFO;
     const msgWarning  = Gtk::MESSAGE_WARNING;
