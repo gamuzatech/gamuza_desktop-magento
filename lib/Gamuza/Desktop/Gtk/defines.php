@@ -72,6 +72,15 @@
     define ('arrRight', Gtk::ARROW_RIGHT);
 }
 
+// enum TAssistantPageType
+{
+    define ('aspContent',  Gtk::ASSISTANT_PAGE_CONTENT);
+    define ('aspIntro',    Gtk::ASSISTANT_PAGE_INTRO);
+    define ('aspConfirm',  Gtk::ASSISTANT_PAGE_CONFIRM);
+    define ('aspSummary',  Gtk::ASSISTANT_PAGE_SUMMARY);
+    define ('aspProgress', Gtk::ASSISTANT_PAGE_PROGRESS);
+}
+
 // enum TAttachOptions
 {
     define ('attExpand',  Gtk::EXPAND);

@@ -72,6 +72,15 @@ abstract class TArrowType
     const arrRight = Gtk::ARROW_RIGHT;
 }
 
+abstract class TAssistantPageType
+{
+    const aspContent  = Gtk::ASSISTANT_PAGE_CONTENT;
+    const aspIntro    = Gtk::ASSISTANT_PAGE_INTRO;
+    const aspConfirm  = Gtk::ASSISTANT_PAGE_CONFIRM;
+    const aspSummary  = Gtk::ASSISTANT_PAGE_SUMMARY;
+    const aspProgress = Gtk::ASSISTANT_PAGE_PROGRESS;
+}
+
 abstract class TAttachOptions
 {
     const attExpand  = Gtk::EXPAND;

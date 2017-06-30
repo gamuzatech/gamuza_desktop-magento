@@ -157,9 +157,9 @@ class TComboBox extends TBin
         $this->Handle->set_add_tearoffs ($add_tearoffs);
     }
 
-    public function SetAttributes (TCellRenderer $cell_renderer, $attribute, $column)
+    public function SetAttributes (TCellRenderer $cell_renderer, string $attribute, int $column)
     {
-        $this->Handle->set_attributes ($cell_renderer->Handle, $attribute, $column);
+        $this->Handle->set_attributes ($cell_renderer->Handle, $attribute, intval ($column));
     }
 
     public function SetColumnSpanColumn (int $column_span)

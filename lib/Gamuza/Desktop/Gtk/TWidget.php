@@ -986,6 +986,20 @@ abstract class TWidget extends TObject
         }
     }
 
+    public function SetAttachOptions (array $options)
+    {
+        if ($this->Parent && $this->Parent instanceof TTable)
+        {
+            $this->Parent->Attach (
+                $this,
+                $options [0], // left
+                $options [1], // right
+                $options [2], // top
+                $options [3]  // bottom
+            );
+        }
+    }
+
     /**
      * Properties
      */
@@ -1065,6 +1079,7 @@ abstract class TWidget extends TObject
             break;
         }
         case 'AppPaintable':     { $this->SetAppPaintable ($val);     break; }
+        case 'AttachOptions':    { $this->SetAttachOptions ($val);    break; }
         case 'ChildVisible':     { $this->SetChildVisible ($val);     break; }
         case 'Colormap':         { $this->SetColormap ($val);         break; }
         case 'CompositeName':    { $this->SetCompositeName ($val);    break; }

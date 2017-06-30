@@ -256,6 +256,11 @@ class TObject
         return $this->_getHelper ()->utf8 ($text);
     }
 
+    public function unquote (/* string */ $text)
+    {
+        return preg_replace ("/[\"\'](.*)[\"\']/", '${1}', $text); // remove quotation marks
+    }
+
     public function _getHelper (/* string */ $klass = 'desktop')
     {
         return Mage::helper ($klass);

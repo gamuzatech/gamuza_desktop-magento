@@ -59,6 +59,7 @@ class TApplication extends TObject
     public function OnFatalError ()
     {
         $error = error_get_last ();
+        if (empty ($error)) return false;
 
         $this->ShowException (new Exception(
             sprintf ("%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
@@ -340,6 +341,14 @@ class TApplication extends TObject
         {
             $parent->AddWithViewport ($object);
         }
+        else if ($object instanceof TWidget && $parent instanceof TAssistant)
+        {
+            $parent->AppendPage ($object);
+        }
+        else if ($object instanceof TWidget && $parent instanceof TTable)
+        {
+            if ($parent->AutoAttach) $parent->Add ($object);
+        }
         else if ($object instanceof TWidget && $parent instanceof TContainer)
         {
             $parent->Add ($object);
@@ -352,7 +361,9 @@ class TApplication extends TObject
         {
             $parent->AppendColumn ($object);
         }
-        else if ($object instanceof TCellRenderer && $parent instanceof TTreeViewColumn)
+        else if (($object instanceof TCellRenderer && $parent instanceof TTreeViewColumn)
+                || ($object instanceof TCellRenderer && $parent instanceof TComboBox)
+                || ($object instanceof TWidget && $parent instanceof TDialog))
         {
             $parent->PackStart ($object, true);
         }
@@ -360,7 +371,7 @@ class TApplication extends TObject
         /**
          * Always show widgets
          */
-        $object->Show ();
+        if ($object instanceof TWidget && !($object instanceof TWindow)) $object->Show ();
 
         /**
          * Parse remaining
@@ -423,71 +434,70 @@ class TApplication extends TObject
 
     private function _parseDfmFileProperty ($owner, $object, $sline)
     {
+        $objectName = get_class ($object);
+
         preg_match ('/[\s]?([a-zA-Z0-9_]+)[\s]?=[\s]?(.*)[\s]?/', $sline, $matches);
 
         $property = $matches [1];
-        $value = trim($matches [2]);
+        $value = trim ($matches [2]);
 
-        $objectName = get_class ($object);
-
-        if (is_callable (array ($owner, $value), true, $callableMethodName) && method_exists ($owner, $value))
+        if (preg_match ("/[\[](.*)[\]]/", $value, $matches))
         {
-            // $ownerClassName = get_class ($parent);
-            // $object->$property = array ($ownerClassName, $value);
+            $result = null;
 
-            // $object->$property = $value;
+            $parts = explode (',', $matches [1]);
+            foreach ($parts as $_part)
+            {
+                $result [] = $this->_parseDfmFileValue ($owner, $_part);
+            }
 
-            $object->$property = $callableMethodName;
-        }
-        else if (is_callable (array ($object, $value), true, $callableMethodName) && method_exists ($object, $value))
-        {
-            // $objectClassName = get_class ($object);
-            // $object->$property = array ($objectClassName, $value);
-
-            // $object->$property = $value;
-
-            $object->$property = $callableMethodName;
-        }
-        else if (is_callable (array ($objectName, $value), true, $callableMethodName) && method_exists ($objectName, $value))
-        {
-            // $object->$property = array ($objectClassName, $value);
-
-            // $object->$property = $value;
-
-            $object->$property = $callableMethodName;
-        }
-        else if (is_callable ($value, true, $callableMethodName) && function_exists ($value))
-        {
-            // $object->$property = $value;
-
-            $object->$property = $callableMethodName;
+            $value = $result;
         }
         else
         {
-            // remove quotation marks
-            if (preg_match ("/'(.*)'/", $value, $matches)) $value = $matches [1];
+            $value = $this->_parseDfmFileValue ($owner, $value);
 
-            if (preg_match ("/[\[](.*)[\]]/", $value, $matches))
+            if ((is_callable (array ($owner, $value), true, $callableMethodName) && method_exists ($owner, $value))
+                || (is_callable (array ($object, $value), true, $callableMethodName) && method_exists ($object, $value))
+                || (is_callable (array ($objectName, $value), true, $callableMethodName) && method_exists ($objectName, $value))
+                || (is_callable ($value, true, $callableMethodName) && function_exists ($value))
+            )
             {
-                $parts = explode (',', $matches [1]);
-                $result = null;
-                foreach ($parts as $_part) $result [] = constant (trim ($_part));
-
-                $object->$property = $result;
-            }
-            else if (!strcmp (strtolower ($value), 'true'))
-            {
-                $object->$property = true;
-            }
-            else if (!strcmp (strtolower ($value), 'false'))
-            {
-                $object->$property = false;
-            }
-            else
-            {
-                $object->$property = $this->__($value);
+                $result = $callableMethodName;
             }
         }
+
+        $object->$property = $value;
+    }
+
+    private function _parseDfmFileValue ($owner, $value)
+    {
+        $value = trim ($value);
+
+        // Object
+        if (property_exists ($owner, $value) && is_object ($owner->$value))
+        {
+            return $owner->$value;
+        }
+
+        // Constant
+        if (defined ($value))
+        {
+            return constant ($value);
+        }
+
+        // Boolean
+        if (!strcmp (strtolower ($value), 'true'))
+        {
+            return true;
+        }
+        else if (!strcmp (strtolower ($value), 'false'))
+        {
+            return false;
+        }
+
+        // String?
+        return $this->unquote ($value);
     }
 
     /**

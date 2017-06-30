@@ -86,11 +86,16 @@ class TWindow extends TBin
 
         $this->Handle = new GtkWindow (/* $type */);
 
+        self::__init ();
+    }
+
+    public function __init ()
+    {
         $this->Position = Gtk::WIN_POS_CENTER;
         $this->AddAccelGroup ($this->_accel_group = new TAccelGroup ());
 
         $this->Connect ('delete-event',  array ($this, '__on_delete_event'));
-        $this->Connect ('destroy-event', array ($this, '__on_destroy_event'));
+        $this->Connect ('destroy',       array ($this, '__on_destroy'));
     }
 
     public function __on_delete_event (GObject $sender, array $event)
@@ -108,7 +113,7 @@ class TWindow extends TBin
         return !$canClose;
     }
 
-    public function __on_destroy_event (GObject $sender, array $event)
+    public function __on_destroy (GObject $sender, array $event)
     {
         $this->_call_user_func ($this, $this->OnClose);
 

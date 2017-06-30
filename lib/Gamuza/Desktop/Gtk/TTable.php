@@ -37,6 +37,11 @@
 class TTable extends TContainer
 {
     /**
+     * Properties
+     */
+    public $AutoAttach = true;
+
+    /**
      * Events
      */
     public function __construct (/* [int $n_rows = 1 [, int $n_columns = 1 [, bool $homogeneous = false]]] */)
@@ -50,8 +55,8 @@ class TTable extends TContainer
      * Methods
      */
     public function Attach (TWidget $child, int $left_attach, int $right_attach, int $top_attach, int $bottom_attach,
-        TAttachOptions $xoptions = atoDefault, TAttachOptions $yoptions = atoDefault,
-        int $xpadding = atoDefault, int $ypadding = atoDefault)
+        TAttachOptions $xoptions = attDefault, TAttachOptions $yoptions = attDefault,
+        int $xpadding = attDefault, int $ypadding = attDefault)
     {
         $this->Handle->attach ($child->Handle, $left_attach, $right_attach, $top_attach, $bottom_attach,
             $xoptions, $yoptions, $xpadding, $ypadding);
@@ -77,9 +82,19 @@ class TTable extends TContainer
         return $this->Handle->get_default_row_spacing ();
     }
 
-    public function GetHomogenous ()
+    public function GetHomogeneous ()
     {
         return $this->Handle->get_homogenous ();
+    }
+
+    public function GetNumColumns ()
+    {
+        return $this->Handle->get_property ('n-columns');
+    }
+
+    public function GetNumRows ()
+    {
+        return $this->Handle->get_property ('n-rows');
     }
 
     public function GetRowSpacing (int $row)
@@ -102,7 +117,7 @@ class TTable extends TContainer
         $this->Handle->set_col_spacings ($spacing);
     }
 
-    public function SetHomogenous (bool $homogeneous)
+    public function SetHomogeneous (bool $homogeneous)
     {
         $this->Handle->set_homogeneous ($homogeneous);
     }
@@ -126,10 +141,19 @@ class TTable extends TContainer
 
         switch ($var)
         {
-        case 'DefaultColSpacing': { $result = $this->getDefaultColSpacing (); break; }
-        case 'DefaultRowSpacing': { $result = $this->getDefaultRowSpacing (); break; }
-        case 'Homogeneous':       { $result = $this->getHomogeneous ();       break; }
-        default: { $result = parent::__get ($var); }
+        case 'DefaultColSpacing': { $result = $this->GetDefaultColSpacing (); break; }
+        case 'DefaultRowSpacing': { $result = $this->GetDefaultRowSpacing (); break; }
+        case 'Homogeneous':       { $result = $this->GetHomogeneous ();       break; }
+        case 'Size':
+        {
+            $n_rows = $this->GetNumRows ();
+            $n_columns = $this->GetNumColumns ();
+
+            $result = array ($n_rows, $n_columns);
+
+            break;
+        }
+        default:                  { $result = parent::__get ($var);                  }
         }
 
         return $result;
@@ -139,10 +163,18 @@ class TTable extends TContainer
     {
         switch ($var)
         {
-        case 'ColSpacings': { $this->setColSpacings ($val); break; }
-        case 'Homogeneous': { $this->setHomogeneous ($val); break; }
-        case 'RowSpacings': { $this->setRowSpacings ($val); break; }
-        default: { parent::__set ($var, $val); }
+        case 'ColSpacings': { $this->SetColSpacings ($val); break; }
+        case 'Homogeneous': { $this->SetHomogeneous ($val); break; }
+        case 'RowSpacings': { $this->SetRowSpacings ($val); break; }
+        case 'Size':
+        {
+            list ($n_rows, $n_columns) = $val;
+
+            $this->Resize ($n_rows, $n_columns);
+
+            break;
+        }
+        default:            { parent::__set ($var, $val);          }
         }
     }
 }
