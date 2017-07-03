@@ -316,9 +316,9 @@ class TTextBuffer extends System\TObject
         $this->Handle->set_modified ($setting);
     }
 
-    public function SetText (string $text, int $len)
+    public function SetText (string $text)
     {
-        $this->Handle->set_text ($text, $len);
+        $this->Handle->set_text ($text);
     }
 
     /**
@@ -346,16 +346,9 @@ class TTextBuffer extends System\TObject
     {
         switch ($var)
         {
-        case 'Modified': { $this->SetModified ($val); break; }
-        case 'Text':
-        {
-            list ($text, $len) = $val;
-
-            $this->SetText ($text, $len);
-
-            break;
-        }
-        default:         { parent::__set ($var, $val);       }
+        case 'Modified': { $this->SetModified ($val);  break; }
+        case 'Text':     { $this->SetText ($val);      break; }
+        default:         { parent::__set ($var, $val);        }
         }
     }
 }

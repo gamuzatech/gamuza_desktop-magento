@@ -98,7 +98,9 @@ class TAssistant extends TWindow
 
     public function GetNthPage (int $page_num)
     {
-        return $this->Handle->get_nth_page ($page_num);
+        $page = $this->Handle->get_nth_page ($page_num);
+
+        return $page->get_data ('__tobject');
     }
 
     public function GetPageComplete ()

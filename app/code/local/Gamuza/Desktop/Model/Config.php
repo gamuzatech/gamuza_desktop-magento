@@ -37,6 +37,11 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
 
     protected $_language = null;
 
+    public function __destruct ()
+    {
+        session_write_close ();
+    }
+
     public function GetDescription ()
     {
         return $this->__($this->_getStoreConfig ('desktop/general/description'));
@@ -66,6 +71,11 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
     public function GetImageFileName (string $filename)
     {
         return $this->getModuleDir ('images', static::MODULE_NAME) . DS . $filename;
+    }
+
+    public function GetMiscFileName (string $filename)
+    {
+        return $this->getModuleDir ('files', static::MODULE_NAME) . DS . $filename;
     }
 
     public function GetTitle ()
@@ -158,7 +168,9 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
     {
         parent::init ($options);
 
-        Mage::app ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
+        $this->_getApp ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $this->_getCoreSession ()->start ();
 
         $this->_getLocale ()->setLocale ($this->GetLanguage ());
 
@@ -168,6 +180,11 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
     protected function _getApp ()
     {
         return Mage::app ();
+    }
+
+    public function _getCoreSession ()
+    {
+        return Mage::getSingleton ('core/session', array ('name' => Mage_Adminhtml_Controller_Action::SESSION_NAMESPACE));
     }
 
     protected function _getLocale ()

@@ -194,7 +194,7 @@ class TLabel extends TMisc
 
     public function SetLineWrap (bool $wrap)
     {
-        $this->Handle->set_wine_wrap ($wrap);
+        $this->Handle->set_line_wrap ($wrap);
     }
 
     public function SetMarkup (string $str)

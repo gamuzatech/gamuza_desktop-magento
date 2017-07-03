@@ -288,7 +288,7 @@ class TTextView extends TContainer
 
     public function SetBuffer (TTextBuffer $buffer)
     {
-        $this->Handle->set_buffer ($buffer);
+        $this->Handle->set_buffer ($buffer->Handle);
     }
 
     public function SetCursorVisible (bool $setting)
