@@ -46,8 +46,14 @@
 class TAssistant extends TWindow
 {
     /**
+     * Components
+     */
+    public $ActionArea;
+
+    /**
      * Events
      */
+    public $OnClose;
     public $OnPrepare;
 
     public function __construct ()
@@ -56,21 +62,34 @@ class TAssistant extends TWindow
 
         $this->Handle = new GtkAssistant ();
 
+        /**
+         * Action Area
+         */
+        $this->AddActionWidget ($EventBox = new TEventBox ());
+        $this->ActionArea = new THBox ();
+        $this->ActionArea->Handle = $EventBox->ParentWidget;
+
         self::__init ();
     }
 
     public function __init ()
     {
-        parent::__init ();
+        TBin::__init ();
 
-        $this->Connect ('prepare',  array ($this, '__on_prepare'));
+        $this->Connect ('close',   array ($this, '__on_close'));
+        $this->Connect ('prepare', array ($this, '__on_prepare'));
+    }
+
+    public function __on_close ($object, array $event)
+    {
+        $this->_call_user_func ($this, $this->OnClose, $event);
     }
 
     public function __on_prepare ($object, $page, array $event)
     {
         $tobject = $page->get_data ('__tobject');
 
-        $this->_call_user_func ($this, $this->OnPrepare, $tobject);
+        $this->_call_user_func ($this, $this->OnPrepare, $tobject, $event);
     }
 
     /**

@@ -55,8 +55,8 @@ class TTable extends TContainer
      * Methods
      */
     public function Attach (TWidget $child, int $left_attach, int $right_attach, int $top_attach, int $bottom_attach,
-        TAttachOptions $xoptions = attDefault, TAttachOptions $yoptions = attDefault,
-        int $xpadding = attDefault, int $ypadding = attDefault)
+        /* TAttachOptions */ $xoptions = attDefault, /* TAttachOptions */ $yoptions = attDefault,
+        /* int */ $xpadding = attDefault, /* int */ $ypadding = attDefault)
     {
         $this->Handle->attach ($child->Handle, $left_attach, $right_attach, $top_attach, $bottom_attach,
             $xoptions, $yoptions, $xpadding, $ypadding);

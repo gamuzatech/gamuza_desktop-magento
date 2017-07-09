@@ -124,6 +124,11 @@ class TApplication extends TObject
         $this->_call_user_func ($reference, $reference->OnLoaded);
     }
 
+    public function DoEvents ()
+    {
+        while ($this->EventsPending ()) $this->MainIteration ();
+    }
+
     public function EventsPending ()
     {
         return Gtk::events_pending ();
@@ -222,6 +227,11 @@ class TApplication extends TObject
         }
     }
 
+    public function MainIteration ()
+    {
+        Gtk::main_iteration ();
+    }
+
     public function MessageBox (
         string $text, string $caption,
         TButtonsType $buttons = null, TMessageType $style = null,
@@ -280,7 +290,12 @@ class TApplication extends TObject
         $this->MessageBox ($e->getMessage (), $this->__("%s - Exception", $this->Title), btnOk, msgError);
     }
 
-    public function Terminate ()
+    public function Terminate (/* int */ $error_code = 0)
+    {
+        exit ($error_code);
+    }
+
+    public function Quit ()
     {
         Gtk::main_quit ();
     }
@@ -337,21 +352,17 @@ class TApplication extends TObject
         if ($owner instanceof TWindow) $owner->$objectName = $object;
 
         // Add gtkwidget to gtkcontainer
-        if ($object instanceof TWidget && $parent instanceof TScrolledWindow)
-        {
-            $parent->AddWithViewport ($object);
-        }
-        else if ($object instanceof TWidget && $parent instanceof TAssistant)
+        if ($object instanceof TWidget && $parent instanceof TAssistant)
         {
             $parent->AppendPage ($object);
+        }
+        else if ($object instanceof TWidget && $parent instanceof TScrolledWindow)
+        {
+            $parent->AddWithViewport ($object);
         }
         else if ($object instanceof TWidget && $parent instanceof TTable)
         {
             if ($parent->AutoAttach) $parent->Add ($object);
-        }
-        else if ($object instanceof TWidget && $parent instanceof TContainer)
-        {
-            $parent->Add ($object);
         }
         else if ($object instanceof TTreeStore && $parent instanceof TTreeView)
         {
@@ -366,6 +377,10 @@ class TApplication extends TObject
                 || ($object instanceof TWidget && $parent instanceof TDialog))
         {
             $parent->PackStart ($object, true);
+        }
+        else if ($object instanceof TWidget && $parent instanceof TContainer)
+        {
+            $parent->Add ($object);
         }
 
         /**
@@ -497,7 +512,7 @@ class TApplication extends TObject
         }
 
         // String?
-        return $this->unquote ($value);
+        return __($this->unquote ($value));
     }
 
     /**

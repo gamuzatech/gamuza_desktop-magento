@@ -93,6 +93,11 @@ class TObject
         unset ($this->_events [$var]);
     }
 
+    public function __init ()
+    {
+        // nothing
+    }
+
     public function __event ($var, $val, $method = 'set')
     {
         if (!empty ($var) && empty ($val))

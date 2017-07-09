@@ -91,6 +91,8 @@ class TWindow extends TBin
 
     public function __init ()
     {
+        parent::__init ();
+
         $this->Position = Gtk::WIN_POS_CENTER;
         $this->AddAccelGroup ($this->_accel_group = new TAccelGroup ());
 

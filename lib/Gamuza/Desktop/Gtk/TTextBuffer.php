@@ -318,7 +318,7 @@ class TTextBuffer extends System\TObject
 
     public function SetText (string $text)
     {
-        $this->Handle->set_text ($text);
+        $this->Handle->set_text ($this->latin1 ($text));
     }
 
     /**

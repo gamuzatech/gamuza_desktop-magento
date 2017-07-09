@@ -75,7 +75,7 @@ class TFrame extends TBin
 
     public function SetLabel (string $label)
     {
-        $this->Handle->set_label ($label);
+        $this->Handle->set_label ($this->latin1 ($label));
     }
 
     public function SetLabelAlign (double $xalign, double $yalign)

@@ -54,7 +54,7 @@ class Gamuza_Desktop_Widget_Welcome extends TForm
     {
         $response = $this->Owner->MessageBox ($this->__('Quit from Gamuza Desktop?'), $this->Title, btnYesNo, msgQuestion);
 
-        if ($response == resYes) $this->Owner->Terminate ();
+        if ($response == resYes) $this->Owner->Quit ();
         else $canClose->value = false;
     }
 

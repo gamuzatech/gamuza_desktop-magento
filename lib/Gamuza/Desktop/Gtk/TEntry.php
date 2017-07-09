@@ -148,7 +148,7 @@ class TEntry extends TWidget
         $this->Handle->set_text ($this->latin1 ($text));
     }
 
-    public function SetVisiblity (bool $visible)
+    public function SetVisibility (bool $visible)
     {
         $this->Handle->set_visibility ($visible);
     }
@@ -193,7 +193,7 @@ class TEntry extends TWidget
         case 'HasFrame':         { $this->SetHasFrame ($val);   break; }
         case 'MaxLength':        { $this->SetMaxLength ($val);  break; }
         case 'Text':             { $this->SetText ($val);       break; }
-        case 'Visiblity':        { $this->SetVisibility ($val); break; }
+        case 'Visibility':       { $this->SetVisibility ($val); break; }
         case 'WidthChars':       { $this->SetWidthChars ($val); break; }
         default:                 { parent::__set ($var, $val);         }
         }

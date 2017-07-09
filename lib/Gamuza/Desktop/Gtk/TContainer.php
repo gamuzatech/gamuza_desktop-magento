@@ -63,7 +63,15 @@ abstract class TContainer extends TWidget
         return $this->Handle->child_type ();
     }
 
-    public function getBorderWidth ()
+    public function Clear ()
+    {
+        foreach ($this->Children as $Child)
+        {
+            $this->Remove ($Child);
+        }
+    }
+
+    public function GetBorderWidth ()
     {
         return $this->Handle->get_border_width ();
     }

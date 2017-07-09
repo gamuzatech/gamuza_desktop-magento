@@ -35,22 +35,16 @@
  *
  * @property string|array $OnTimer
  */
-class TTimer extends TEventBox
+class TTimer extends System\TObject
 {
     protected $_enabled  = false;
     protected $_interval = 1000;
+    protected $_handler  = null;
 
     /**
      * Events
      */
     public $OnTimer;
-
-    public function __construct ()
-    {
-        parent::__construct ();
-
-        Gtk::timeout_add ($this->Interval, array ($this, '_timeout_event'));
-    }
 
     public function _timeout_event ()
     {
@@ -75,6 +69,17 @@ class TTimer extends TEventBox
     public function SetEnabled (bool $enabled)
     {
         $this->_enabled = $enabled;
+
+        if ($enabled && !$this->_handler)
+        {
+            $this->_handler = Gtk::timeout_add ($this->Interval, array ($this, '_timeout_event'));
+        }
+        else if (!$enabled && $this->_handler)
+        {
+            Gtk::timeout_remove ($this->_handler);
+
+            $this->_handler = null;
+        }
     }
 
     public function SetInterval (int $interval)
@@ -103,8 +108,8 @@ class TTimer extends TEventBox
     {
         switch ($var)
         {
-        case 'Enabled':  { $this->setEnabled ($val);   break; }
-        case 'Interval': { $this->setInterval ($val);  break; }
+        case 'Enabled':  { $this->SetEnabled ($val);   break; }
+        case 'Interval': { $this->SetInterval ($val);  break; }
         default:         { parent::__set ($var, $val);        }
         }
     }

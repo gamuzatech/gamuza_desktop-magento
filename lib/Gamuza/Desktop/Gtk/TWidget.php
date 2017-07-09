@@ -46,7 +46,7 @@
  * @property string         $HintMarkup
  * @proeprty string         $Name
  * @property bool           $NoShowAll
- * @property TWidget        $Parent
+ * @property GtkWidget      $ParentWidget
  * @property GdkWindow      $ParentWindow
  * @property bool           $RedrawOnAllocate
  * @property array          $ScrollAdjustments
@@ -57,6 +57,7 @@
  * @property string         $TooltipMarkup
  * @property string         $TooltipText
  * @property bool           $Visible
+ * @property bool           $VisibleAll
  *
  * @property string|array $OnAccelClosuresChanged;
  * @property string|array $OnButtonPressEvent;
@@ -425,7 +426,7 @@ abstract class TWidget extends TObject
         return $this->Handle->get_pango_context ();
     }
 
-    public function GetParent ()
+    public function GetParentWidget ()
     {
         return $this->Handle->get_parent ();
     }
@@ -667,7 +668,7 @@ abstract class TWidget extends TObject
 
     public function Reparent (TWidget $new_parent)
     {
-        $this->Handle->reparent ($new_parent);
+        $this->Handle->reparent ($new_parent->Handle);
     }
 
     public function ResetRCStyles ()
@@ -790,7 +791,7 @@ abstract class TWidget extends TObject
         $this->Handle->set_no_show_all ($no_show_all);
     }
 
-    public function SetParent (TWidget $parent)
+    public function SetParentWidget (GtkWidget $parent)
     {
         $this->Handle->set_parent ($parent);
     }
@@ -840,18 +841,18 @@ abstract class TWidget extends TObject
         $this->Handle->set_tooltip_text ($text);
     }
 
-    public function SetVisible (bool $visible, /* bool */ $all = true)
+    public function SetVisible (bool $visible)
     {
-        if ($visible)
-        {
-            if ($all) $this->ShowAll ();
-            else $this->Show ();
-        }
-        else
-        {
-            if ($all) $this->HideAll ();
-            else $this->Hide ();
-        }
+        if ($visible) $this->Show ();
+        else $this->Hide ();
+
+        // return $this->Handle->set_visible ($visible, $all);
+    }
+
+    public function SetVisibleAll (bool $visible)
+    {
+        if ($visible) $this->ShowAll ();
+        else $this->HideAll ();
 
         // return $this->Handle->set_visible ($visible, $all);
     }
@@ -1042,7 +1043,7 @@ abstract class TWidget extends TObject
         case 'PackType':         { $result = $this->GetPackType ();         break; }
         case 'Padded':           { $result = $this->GetPadded ();           break; }
         case 'PangoContext':     { $result = $this->GetPangoContext ();     break; }
-        case 'Parent':           { $result = $this->GetParent ();           break; }
+        case 'ParentWidget':     { $result = $this->GetParentWidget ();     break; }
         case 'ParentWindow':     { $result = $this->GetParentWindow ();     break; }
         case 'Pointer':          { $result = $this->GetPointer ();          break; }
         case 'RootWindow':       { $result = $this->GetRootWindow ();       break; }
@@ -1106,7 +1107,7 @@ abstract class TWidget extends TObject
         case 'NoShowAll':        { $this->SetNoShowAll ($val);        break; }
         case 'PackType':         { $this->SetPackType ($val);         break; }
         case 'Padded':           { $this->SetPadded ($val);           break; }
-        case 'Parent':           { $this->SetParent ($val);           break; }
+        case 'ParentWidget':     { $this->SetParentWidget ($val);     break; }
         case 'ParentWindow':     { $this->SetParentWindow ($val);     break; }
         case 'RedrawOnAllocate': { $this->SetRedrawOnAllocate ($val); break; }
         case 'ScrollAdjustments':
@@ -1121,14 +1122,8 @@ abstract class TWidget extends TObject
         case 'SizeRequest':      { $this->SetSizeRequest ($val);      break; }
         case 'State':            { $this->SetState ($val);            break; }
         case 'Style':            { $this->SetStyle ($val);            break; }
-        case 'Visible':
-        {
-            list ($visible, $all) = $val;
-
-            $this->SetVisible ($visible, $all);
-
-            break;
-        }
+        case 'Visible':          { $this->SetVisible ($val);          break; }
+        case 'VisibleAll':       { $this->SetVisibleAll ($val);       break; }
         case 'Width':
         {
             $height = $this->Height;
