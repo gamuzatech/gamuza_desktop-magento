@@ -96,8 +96,9 @@ class TWindow extends TBin
         $this->Position = Gtk::WIN_POS_CENTER;
         $this->AddAccelGroup ($this->_accel_group = new TAccelGroup ());
 
-        $this->Connect ('delete-event',  array ($this, '__on_delete_event'));
-        $this->Connect ('destroy',       array ($this, '__on_destroy'));
+        $this->Connect ('delete-event',    array ($this, '__on_delete_event'));
+        $this->Connect ('destroy',         array ($this, '__on_destroy'));
+        $this->Connect ('focus-in-event',  array ($this, '__on_focus_in_event'));
     }
 
     public function __on_delete_event (GObject $sender, array $event)
@@ -120,6 +121,11 @@ class TWindow extends TBin
         $this->_call_user_func ($this, $this->OnClose);
 
         if ($this->Owner->MainWindow == $this) Gtk::main_quit ();
+    }
+
+    public function __on_focus_in_event (GObject $sender, array $event, array $data)
+    {
+        $this->Owner->ActiveWindow = $this;
     }
 
     /**

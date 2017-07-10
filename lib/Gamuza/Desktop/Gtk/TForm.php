@@ -46,9 +46,9 @@ class TForm extends TWindow
     {
         parent::__construct ();
 
-        $this->Layout = new TLayout ();
+        parent::Add ($this->Layout = new TLayout ());
 
-        parent::Add ($this->Layout);
+        $this->Layout->Show ();
     }
 
     /**

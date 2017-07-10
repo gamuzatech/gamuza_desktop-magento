@@ -46,23 +46,7 @@ define ('D_S', DIRECTORY_SEPARATOR);
 require   MAGENTO_ROOT . D_S . 'app' . D_S . 'Mage.php';
 require   MAGENTO_ROOT . D_S . 'app' . D_S . 'Desktop.php';
 
-/*
-if (!Mage::isInstalled ())
-{
-    echo 'Gamuza Desktop is not installed yet, please complete install wizard first.' . PHP_EOL;
-
-    exit (255);
-}
-*/
-
 # Varien_Profiler::enable ();
-
-/*
-if (isset ($_SERVER ['MAGE_IS_DEVELOPER_MODE']))
-{
-    Mage::setIsDeveloperMode (true);
-}
-*/
 
 global $Welcome;
 
@@ -70,8 +54,17 @@ try
 {
     $Application->Init ();
 
+    /*
+    if (!Mage::isInstalled ())
+    {
+        echo 'Gamuza Desktop is not installed yet, please complete install wizard first.' . PHP_EOL;
+
+        exit (255);
+    }
+    */
+
     $Application->CreateWindow ('desktop/welcome', $Welcome);
-    $Welcome->ShowAll ();
+    $Welcome->Show ();
 
     $Application->Run ();
 }

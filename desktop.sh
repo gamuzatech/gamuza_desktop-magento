@@ -23,30 +23,23 @@ echo -e "Gamuza Desktop - Visual Component Library for Magento - Version 0.0.1\n
 ARGS="-H -d enable_dl=On"
 
 uname -a
-$PHP $ARGS -v
+echo "[ $PHP -v ]"
+$PHP -v
 
 DIRNAME=$(dirname "$0")
 cd $DIRNAME
 
 cat << __EOF__ | $PHP $ARGS > $TEMPFILE
-
 <?php require 'desktop.php';
-
 __EOF__
 
 RETURN=$?
 
-echo $RETURN
-
-if [ $RETURN == 255 ] || [ $RETURN == 139 ]; then
+if [ $RETURN != "0" ]; then
     sed -i '1i Gamuza Desktop stopped because an error occurred while it was running!' $TEMPFILE
 
     Exception
 fi
-
-echo $TEMPFILE
-
-cat $TEMPFILE
 
 rm -f $TEMPFILE
 

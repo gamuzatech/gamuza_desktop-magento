@@ -49,6 +49,15 @@ class TScrolledWindow extends TBin
         parent::__construct ();
 
         $this->Handle = new GtkScrolledWindow (/* $hadjustment, $vadjustment */);
+
+        self::__init ();
+    }
+
+    public function __init ()
+    {
+        parent::__init ();
+
+        $this->Policy = array (polAutomatic, polAutomatic);
     }
 
     /**

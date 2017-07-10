@@ -45,6 +45,8 @@ class TApplication extends TObject
     protected $_title       = null;
     protected $_version     = null;
 
+    public $ActiveWindow = null;
+
     /**
      * Components
      */
@@ -156,21 +158,7 @@ class TApplication extends TObject
 
     public function Init ()
     {
-        Mage::app ('admin', 'store', array ('config_model' => Desktop::ConfigModel ()))->setUseSessionInUrl (false);
-
-        Mage::app ()->setErrorHandler (function (
-            $errno, $errstr, $errfile, $errline /* , $errcontext */
-        )
-        {
-            if ($errno == E_RECOVERABLE_ERROR) return true; // cast
-
-            echo sprintf ("%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
-                $this->__('Number'), $errno,
-                $this->__('String'), $errstr,
-                $this->__('File'),   $errfile,
-                $this->__('Line'),   $errline
-            );
-        });
+        $this->_init ();
 
         $this->LoadLibrary ('cairo');
         $this->LoadLibrary ('php-gtk', 'php_gtk2');
@@ -233,18 +221,20 @@ class TApplication extends TObject
     }
 
     public function MessageBox (
-        string $text, string $caption,
-        TButtonsType $buttons = null, TMessageType $style = null,
-        TButtonsType $default = null, TButtonsType $escape = null
+        string $text, string $title = null,
+        /* TButtonsType */ $buttons = btnOk, /* TMessageType */ $style = msgInfo,
+        TWindow $parent = null
     )
     {
-        $dialog = new GtkMessageDialog (null, Gtk::DIALOG_MODAL, $style, $buttons, $text);
+        $_activeWindow = !empty ($this->ActiveWindow) ? $this->ActiveWindow->Handle : null;
+        $_parent = !empty ($parent) ? $parent->Handle : $_activeWindow;
+        $_title = !empty ($title) ? $title : $this->Title;
 
-        $_caption = $caption ? $caption : $this->Title;
+        $dialog = new GtkMessageDialog ($_parent, Gtk::DIALOG_MODAL, $style, $buttons, $text);
 
         $dialog->set_markup ($this->latin1 ($text));
-        $dialog->set_title ($this->latin1 ($_caption));
-        // $dialog->set_transient_for (null);
+        $dialog->set_title ($this->latin1 ($_title));
+        $dialog->set_transient_for ($_parent);
         $dialog->set_position (Gtk::WIN_POS_CENTER);
         // $this->set_icon_from_file ();
 
@@ -252,6 +242,11 @@ class TApplication extends TObject
         $dialog->destroy();
 
         return $result;
+    }
+
+    public function Reinit ()
+    {
+        $this->_init ();
     }
 
     public function Run ()
@@ -298,6 +293,27 @@ class TApplication extends TObject
     public function Quit ()
     {
         Gtk::main_quit ();
+    }
+
+    private function _init ()
+    {
+        Mage::reset ();
+
+        Mage::app ('admin', 'store', array ('config_model' => Desktop::ConfigModel ()))->setUseSessionInUrl (false);
+
+        Mage::app ()->setErrorHandler (function (
+            $errno, $errstr, $errfile, $errline /* , $errcontext */
+        )
+        {
+            if ($errno == E_RECOVERABLE_ERROR) return true; // cast
+
+            echo sprintf ("%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
+                $this->__('Number'), $errno,
+                $this->__('String'), $errstr,
+                $this->__('File'),   $errfile,
+                $this->__('Line'),   $errline
+            );
+        });
     }
 
     private function _parseDfmFileObject ($dfmFile, $handle, $owner, $parent)
