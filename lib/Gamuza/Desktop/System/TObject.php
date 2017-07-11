@@ -93,11 +93,6 @@ class TObject
         unset ($this->_events [$var]);
     }
 
-    public function __init ()
-    {
-        // nothing
-    }
-
     public function __event ($var, $val, $method = 'set')
     {
         if (!empty ($var) && empty ($val))
@@ -111,6 +106,11 @@ class TObject
 
             $this->__connect ($signal, $var, $val);
         }
+    }
+
+    public function __signal ()
+    {
+        // nothing
     }
 
     public function __on_event (GObject $object, array $event)

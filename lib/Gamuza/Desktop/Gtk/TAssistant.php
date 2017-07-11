@@ -69,12 +69,12 @@ class TAssistant extends TWindow
         $this->ActionArea = new THBox ();
         $this->ActionArea->Handle = $EventBox->ParentWidget;
 
-        self::__init ();
+        self::__signal ();
     }
 
-    public function __init ()
+    public function __signal ()
     {
-        TBin::__init ();
+        parent::__signal ();
 
         $this->Connect ('close',   array ($this, '__on_close'));
         $this->Connect ('prepare', array ($this, '__on_prepare'));

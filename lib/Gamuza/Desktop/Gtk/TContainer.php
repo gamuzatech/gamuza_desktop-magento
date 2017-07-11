@@ -78,7 +78,14 @@ abstract class TContainer extends TWidget
 
     public function GetChildren ()
     {
-        return $this->Handle->get_children ();
+        $result = array ();
+
+        foreach ($this->Handle->get_children () as $child)
+        {
+            $result [] = $child->get_data ('__tobject');
+        }
+
+        return $result;
     }
 
     public function GetFocusChain ()

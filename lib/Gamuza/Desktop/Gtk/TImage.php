@@ -57,42 +57,66 @@ class TImage extends TMisc
      */
     public static function NewFromAnimation (GdkPixbufAnimation $animation)
     {
-        return GtkImage::new_from_animation ($animation);
+        $image = new TImage ();
+        $image->Handle = GtkImage::new_from_animation ($animation);
+
+        return $image;
     }
 
     public static function NewFromFile (string $filename)
     {
-        return GtkImage::new_from_file ($filename);
+        $image = new TImage ();
+        $image->Handle = GtkImage::new_from_file ($filename);
+
+        return $image;
     }
 
     public static function NewFromIconSet (TIconSet $iconset, TIconSize $size)
     {
-        return GtkImage::new_from_icon_set ($iconset, $size);
+        $image = new TImage ();
+        $image->Handle = GtkImage::new_from_icon_set ($iconset, $size);
+
+        return $image;
     }
 
     public static function NewFromImage (GdkImage $image, $mask)
     {
-        return GtkImage::new_from_image ($image, $mask);
+        $image = new TImage ();
+        $image->Handle = GtkImage::new_from_image ($image, $mask);
+
+        return $image;
     }
 
     public static function NewFromPixbuf (GdkPixbuf $pixbuf)
     {
-        return GtkImage::new_from_pixbuf ($pixbuf);
+        $image = new TImage ();
+        $image->Handle = GtkImage::new_from_pixbuf ($pixbuf);
+
+        return $image;
     }
 
     public static function NewFromPixmap (GdkPixmap $pixmap, $mask)
     {
-        return GtkImage::new_from_pixmap ($pixmap, $mask);
+        $image = new TImage ();
+        $image->Handle = GtkImage::new_from_pixmap ($pixmap, $mask);
+
+        return $image;
     }
 
     public static function NewFromStock (TStockItems $stock_id, TIconSize $size)
     {
-        return GtkImage::new_from_stock ($stock_id, $size);
+        $image = new TImage ();
+        $image->Handle = GtkImage::new_from_stock ($stock_id, $size);
+
+        return $image;
     }
 
     public static function NewFromIconName (string $icon_name, $size)
     {
-        return GtkImage::new_from_icon_name ($icon_name, $size);
+        $image = new TImage ();
+        $image->Handle = GtkImage::new_from_icon_name ($icon_name, $size);
+
+        return $image;
     }
 
     public function GetAnimation ()

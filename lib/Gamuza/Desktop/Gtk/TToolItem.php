@@ -86,7 +86,7 @@ class TToolItem extends TBin
     {
         $widget = $this->Handle->get_proxy_menu_item ($menu_item_id);
 
-        return $widget->get_data ('__gobject');
+        return $widget->get_data ('__tobject');
     }
 
     public function GetReliefStyle ()
@@ -123,7 +123,7 @@ class TToolItem extends TBin
     {
         $widget = $this->Handle->retrieve_proxy_menu_item ();
 
-        return $widget->get_data ('__gobject');
+        return $widget->get_data ('__tobject');
     }
 
     public function SetExpand (bool $expand)

@@ -33,6 +33,7 @@
  * @property int           $CurrentPage
  * @property array         $MenuLabel
  * @property array         $MenuLabelText
+ * @property int           $NumPages
  * @property bool          $Scrollable
  * @property bool          $ShowBorder
  * @property bool          $ShowTabs
@@ -70,7 +71,7 @@ class TNotebook extends TContainer
     public function AppendPageMenu (TWidget $child, TWidget $tab_label = null, TWidget $menu_label = null)
     {
         return $this->Handle->append_page_menu (
-            $child,
+            $child->Handle,
             $tab_label ? $tab_label->Handle : null,
             $menu_label ? $menu_label->Handle : null
         );
@@ -91,14 +92,16 @@ class TNotebook extends TContainer
         return $this->Handle->get_menu_label_text ($child->Handle);
     }
 
-    public function GetNPages ()
+    public function GetNumPages ()
     {
         return $this->Handle->get_n_pages ();
     }
 
     public function GetNthPage (int $page_num)
     {
-        return $this->Handle->get_nth_page ($page_num);
+        $page = $this->Handle->get_nth_page ($page_num);
+
+        return $page->get_data ('__tobject');
     }
 
     public function GetScrollable ()
@@ -256,7 +259,7 @@ class TNotebook extends TContainer
         case 'CurrentPage':   { $result = $this->GetCurrentPage ();   break; }
         case 'MenuLabel':     { $result = $this->GetMenuLabel ();     break; }
         case 'MenuLabelText': { $result = $this->GetMenuLabelText (); break; }
-        case 'NPages':        { $result = $this->GetNPages ();        break; }
+        case 'NumPages':      { $result = $this->GetNumPages ();      break; }
         case 'NthPage':       { $result = $this->GetNthPage ();       break; }
         case 'Scrollable':    { $result = $this->GetScrollable ();    break; }
         case 'ShowBorder':    { $result = $this->GetShowBorder ();    break; }

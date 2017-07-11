@@ -49,16 +49,9 @@ class TDialog extends TWindow
      */
     public function __construct (/* [string $title = null [, TWidget $parent_window = null [, TDialogFlags $dialog_flags = 0 [, array (TButton, TResponseType)]]]] */)
     {
-        TBin::__construct ();
+        parent::__construct ();
 
         $this->Handle = new GtkDialog (/* $title, $parent_window, $dialog_flags, array () */);
-
-        self::__init ();
-    }
-
-    public function __init ()
-    {
-        parent::__init ();
 
         $this->ActionArea = new THButtonBox ();
         $this->ActionArea->Handle = $this->Handle->action_area;
@@ -66,7 +59,9 @@ class TDialog extends TWindow
 
         $this->ContentArea = new TVBox ();
         $this->ContentArea->Handle = $this->Handle->vbox;
-        $this->Handle->vbox->set_data ('__gobject', $this->ContentArea);
+        $this->Handle->vbox->set_data ('__tobject', $this->ContentArea);
+
+        parent::__signal ();
     }
 
     /**

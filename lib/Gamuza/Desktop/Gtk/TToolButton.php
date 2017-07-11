@@ -62,7 +62,7 @@ class TToolButton extends TToolItem
     {
         $widget = $this->Handle->get_icon_widget ();
 
-        return $widget->get_data ('__gobject');
+        return $widget->get_data ('__tobject');
     }
 
     public function GetLabel ()
@@ -74,7 +74,7 @@ class TToolButton extends TToolItem
     {
         $widget = $this->Handle->get_label_widget ();
 
-        return $widget->get_data ('__gobject');
+        return $widget->get_data ('__tobject');
     }
 
     public function GetStockId ()

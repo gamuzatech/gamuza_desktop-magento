@@ -62,7 +62,10 @@ class TButton extends TBin
      */
     public static function NewFromStock (string $stock_id)
     {
-        return GtkButton::new_from_stock ($stock_id);
+        $button = new TButton ();
+        $button->Handle = GtkButton::new_from_stock ($stock_id);
+
+        return $button;
     }
 
     public function Clicked ()
@@ -89,7 +92,7 @@ class TButton extends TBin
     {
         $image = $this->Handle->get_image ();
 
-        return $image->get_data ('__gobject');
+        return $image->get_data ('__tobject');
     }
 
     public function GetLabel ()

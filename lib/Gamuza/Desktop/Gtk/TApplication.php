@@ -226,17 +226,19 @@ class TApplication extends TObject
         TWindow $parent = null
     )
     {
-        $_activeWindow = !empty ($this->ActiveWindow) ? $this->ActiveWindow->Handle : null;
-        $_parent = !empty ($parent) ? $parent->Handle : $_activeWindow;
+        $_parent = !empty ($parent) ? $parent : $this->ActiveWindow;
+        $_icon = !empty ($_parent) ? $_parent->IconFile : null;
+        $_window = !empty ($_parent) ? $_parent->Handle : null;
         $_title = !empty ($title) ? $title : $this->Title;
 
-        $dialog = new GtkMessageDialog ($_parent, Gtk::DIALOG_MODAL, $style, $buttons, $text);
+        $dialog = new GtkMessageDialog ($_window, Gtk::DIALOG_MODAL, $style, $buttons, $text);
 
         $dialog->set_markup ($this->latin1 ($text));
         $dialog->set_title ($this->latin1 ($_title));
-        $dialog->set_transient_for ($_parent);
+        $dialog->set_transient_for ($_window);
         $dialog->set_position (Gtk::WIN_POS_CENTER);
-        // $this->set_icon_from_file ();
+
+        if ($_icon) $dialog->set_icon_from_file ($_icon);
 
         $result = $dialog->run ();
         $dialog->destroy();
@@ -297,6 +299,8 @@ class TApplication extends TObject
 
     private function _init ()
     {
+        Mage::$headersSentThrowsException = false;
+
         Mage::reset ();
 
         Mage::app ('admin', 'store', array ('config_model' => Desktop::ConfigModel ()))->setUseSessionInUrl (false);
@@ -368,7 +372,8 @@ class TApplication extends TObject
         if ($owner instanceof TWindow) $owner->$objectName = $object;
 
         // Add gtkwidget to gtkcontainer
-        if ($object instanceof TWidget && $parent instanceof TAssistant)
+        if (($object instanceof TWidget && $parent instanceof TAssistant)
+            || ($object instanceof TWidget && $parent instanceof TNotebook))
         {
             $parent->AppendPage ($object);
         }

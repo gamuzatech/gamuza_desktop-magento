@@ -83,8 +83,8 @@ class TTooltips extends TObject
         case 'Delay':          { $result = $this->Handle->delay;                              break; }
         case 'Enabled':        { $result = $this->Handle->enabled;                            break; }
         case 'Timer':          { $result = $this->Handle->timer_tag;                          break; }
-        case 'TipLabel':       { $result = $this->Handle->tip_label->get_data ('__gobject');  break; }
-        case 'TipWindow':      { $result = $this->Handle->tip_window->get_data ('__gobject'); break; }
+        case 'TipLabel':       { $result = $this->Handle->tip_label->get_data ('__tobject');  break; }
+        case 'TipWindow':      { $result = $this->Handle->tip_window->get_data ('__tobject'); break; }
         case 'TipsDataList':   { $result = $this->Handle->tips_data_list;                     break; }
         case 'UseStickyDelay': { $result = $this->Handle->use_sticky_delay;                   break; }
         default:               { $result = parent::__get ($var);                                     }

@@ -30,6 +30,7 @@
 /**
  * Class TWindow
  *
+ * @property TAccelGroup       $AccelGroup
  * @property bool              $AcceptFocus
  * @property bool              $AutoStartupNotification
  * @property bool              $Decorated
@@ -44,7 +45,7 @@
  * @property GdkGravity        $Gravity
  * @property bool              $HasFrame
  * @proeprty GdkPixbuf         $Icon
- * @property array             $IconFromFile
+ * @property string            $IconFromFile
  * @property array             $IconList
  * @property string            $IconName
  * @property bool              $KeepAbove
@@ -73,6 +74,7 @@
 class TWindow extends TBin
 {
     protected $_accel_group;
+    protected $_icon_file;
 
     /**
      * Events
@@ -86,15 +88,15 @@ class TWindow extends TBin
 
         $this->Handle = new GtkWindow (/* $type */);
 
-        self::__init ();
-    }
-
-    public function __init ()
-    {
-        parent::__init ();
-
         $this->Position = Gtk::WIN_POS_CENTER;
         $this->AddAccelGroup ($this->_accel_group = new TAccelGroup ());
+
+        self::__signal ();
+    }
+
+    public function __signal ()
+    {
+        parent::__signal ();
 
         $this->Connect ('delete-event',    array ($this, '__on_delete_event'));
         $this->Connect ('destroy',         array ($this, '__on_destroy'));
@@ -206,6 +208,11 @@ class TWindow extends TBin
         $this->Handle->fullscreen ();
     }
 
+    public function GetAccelGroup ()
+    {
+        return $this->_accel_group;
+    }
+
     public function GetAcceptFocus ()
     {
         return $this->Handle->get_accept_focus ();
@@ -254,6 +261,11 @@ class TWindow extends TBin
     public function GetIcon ()
     {
         return $this->Handle->get_icon ();
+    }
+
+    public function GetIconFile ()
+    {
+        return $this->_icon_file;
     }
 
     public function GetIconList ()
@@ -457,9 +469,9 @@ class TWindow extends TBin
         $this->Handle->set_icon ($icon);
     }
 
-    public function SetIconFromFile (string $filename, $error)
+    public function SetIconFromFile (string $filename)
     {
-        $this->Handle->set_icon_from_file ($filename, $error);
+        $this->Handle->set_icon_from_file ($this->_icon_file = $filename);
     }
 
     public function SetIconList (array $list)
@@ -575,6 +587,7 @@ class TWindow extends TBin
         switch ($var)
         {
         case 'AcceptFocus':       { $result = $this->GetAcceptFocus ();       break; }
+        case 'AccelGroup':        { $result = $this->GetAccelGroup ();        break; }
         case 'Decorated':         { $result = $this->GetDecorated ();         break; }
         case 'DefaultSize':       { $result = $this->GetDefaultSize ();       break; }
         case 'DestroyWithParent': { $result = $this->GetDestroyWithParent (); break; }
@@ -584,6 +597,7 @@ class TWindow extends TBin
         case 'Gravity':           { $result = $this->GetGravity ();           break; }
         case 'HasFrame':          { $result = $this->GetHasFrame ();          break; }
         case 'Icon':              { $result = $this->GetIcon ();              break; }
+        case 'IconFile':          { $result = $this->GetIconFile ();          break; }
         case 'IconList':          { $result = $this->GetIconList ();          break; }
         case 'IconName':          { $result = $this->GetIconName ();          break; }
         case 'MnemonicModifier':  { $result = $this->GetMnemonicModifier ();  break; }
@@ -635,14 +649,7 @@ class TWindow extends TBin
         case 'Gravity':                 { $this->SetGravity ($val);                 break; }
         case 'HasFrame':                { $this->SetHasFrame ($val);                break; }
         case 'Icon':                    { $this->SetIcon ($val);                    break; }
-        case 'IconFromFile':
-        {
-            list ($filename, $error) = $val;
-
-            $this->SetIconFromFile ($filename, $error);
-
-            break;
-        }
+        case 'IconFromFile':            { $this->SetIconFromFile ($val);            break; }
         case 'IconList':                { $this->SetIconList ($val);                break; }
         case 'IconName':                { $this->SetIconName ($val);                break; }
         case 'KeepAbove':               { $this->SetKeepAbove ($val);               break; }

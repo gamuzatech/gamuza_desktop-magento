@@ -161,7 +161,7 @@ class TTreeView extends TContainer
     {
         $column = $this->Handle->get_column ($number);
 
-        return $column->get_data ('__gobject');
+        return $column->get_data ('__tobject');
     }
 
     public function GetColumns ()

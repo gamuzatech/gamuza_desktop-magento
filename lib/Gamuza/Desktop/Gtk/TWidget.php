@@ -131,9 +131,9 @@ abstract class TWidget extends TObject
         return $this->Handle->get_acivate ();
     }
 
-    public function AddAccelerator (string $signal, TAccelGroup $group, int $accel_key, TModifyerType $modifiers, TAccelFlags $flags)
+    public function AddAccelerator (string $signal, TAccelGroup $group, int $accel_key, /* TModifyerType */ $modifiers = 0, /* TAccelFlags */ $flags = accVisible)
     {
-        $this->Handle->add_accelerator ($signal, $group, $accel_key, $modifiers, $flags);
+        $this->Handle->add_accelerator ($signal, $group->Handle, $accel_key, $modifiers, $flags);
     }
 
     public function AddEvents (GdkEventMask $events)
