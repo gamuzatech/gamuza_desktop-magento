@@ -63,6 +63,23 @@ class TEntry extends TWidget
         parent::__construct ();
 
         $this->Handle = new GtkEntry (/* $text, $max */);
+
+        self::__signal ();
+    }
+
+    public function __signal ()
+    {
+        parent::__signal ();
+
+        $this->Connect ('key-press-event', array ($this, '__on_key_press_event'));
+    }
+
+    public function __on_key_press_event ($object, $event)
+    {
+        if ($this->Owner && ($event->keyval == Gdk::KEY_Return || $event->keyval == Gdk::KEY_KP_Enter))
+        {
+            $this->Owner->ChildFocus (dirTabForward);
+        }
     }
 
     /**

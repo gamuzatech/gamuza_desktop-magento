@@ -209,7 +209,7 @@ class TNotebook extends TContainer
 
     public function SetMenuLabelText (TWidget $child, string $menu_text)
     {
-        $this->Handle->set_menu_label_text ($child->Handle, $menu_text);
+        $this->Handle->set_menu_label_text ($child->Handle, $this->latin1 ($menu_text));
     }
 
     public function SetScrollable (bool $scrollable)
@@ -239,7 +239,7 @@ class TNotebook extends TContainer
 
     public function SetTabLabelText (Twidget $child, string $tab_text)
     {
-        $this->Handle->set_tab_label_text ($child->Handle, $tab_text);
+        $this->Handle->set_tab_label_text ($child->Handle, $this->latin1 ($tab_text));
     }
 
     public function SetTabPos (TPositionType $pos)

@@ -31,6 +31,7 @@
  * Class TContainer
  *
  * @property int         $BorderWidth
+ * @property array       $Children
  * @property array       $FocusChain
  * @property TWidget     $FocusChild
  * @property TAdjustment $FocusHAdjustment

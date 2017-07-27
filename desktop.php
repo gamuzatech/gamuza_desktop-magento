@@ -63,15 +63,17 @@ try
     }
     */
 
-    $Application->CreateWindow ('desktop/welcome', $Welcome);
+    $Welcome = $Application->CreateWindow ('desktop/welcome');
     $Welcome->Show ();
 
     $Application->Run ();
 }
 catch (Exception $e)
 {
-    echo ' ! Application Exception : ' . $e->getMessage () . PHP_EOL;
+    $Application->ShowException ($e);
 
-    exit (255);
+    // echo ' ! Application Exception : ' . $e->getMessage () . PHP_EOL;
+
+    // exit (255);
 }
 

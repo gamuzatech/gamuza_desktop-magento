@@ -88,9 +88,12 @@ class TObject
 
     public function __disconnect ($var)
     {
-        $this->Disconnect ($this->_events [$var][self::EVENT_HANDLER]);
+        if (is_array ($this->_events) && array_key_exists ($var, $this->_events))
+        {
+            $this->Disconnect ($this->_events [$var][self::EVENT_HANDLER]);
 
-        unset ($this->_events [$var]);
+            unset ($this->_events [$var]);
+        }
     }
 
     public function __event ($var, $val, $method = 'set')
@@ -263,7 +266,7 @@ class TObject
 
     public function unquote (/* string */ $text)
     {
-        return preg_replace ("/[\"\'](.*)[\"\']/", '${1}', $text); // remove quotation marks
+        return $this->_getHelper ()->unquote ($text);
     }
 
     public function _getHelper (/* string */ $klass = 'desktop')
@@ -395,6 +398,11 @@ class TObject
                 {
                     return call_user_func_array ($_methodName, $stack_args);
                 }
+            }
+
+            if (is_object ($methodName) && !strcmp (get_class ($methodName), 'Closure'))
+            {
+                return $methodName ($object, $stack_args);
             }
 
             throw new Exception (sprintf ("%s: %s", __METHOD__, $this->__("Cannot call event '%s' from '%s' class '%s' type '%s'",

@@ -41,8 +41,8 @@
  */
 class TApplication extends TObject
 {
+    protected $_title       = "Application";
     protected $_description = null;
-    protected $_title       = null;
     protected $_version     = null;
 
     public $ActiveWindow = null;
@@ -64,7 +64,8 @@ class TApplication extends TObject
         if (empty ($error)) return false;
 
         $this->ShowException (new Exception(
-            sprintf ("%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
+            sprintf ("%s\n%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
+                $this->__('--- FATAL ERROR ---'),
                 $this->__('Type'),    $error ['type'],
                 $this->__('Message'), $error ['message'],
                 $this->__('File'),    $error ['file'],
@@ -76,54 +77,66 @@ class TApplication extends TObject
     /**
      * Methods
      */
-    public function CreateBlock ($klass, & $reference)
+    public function CreateBlock ($klass)
     {
         $blockClassName = $this->GetConfig ()->getBlockClassName ($klass);
 
         if (class_exists ($blockClassName, true))
         {
-            $reference = new $blockClassName;
+            $block = new $blockClassName;
+
+            $this->LoadDfmFile ($blockClassName, $block, false);
+
+            return $block;
         }
         else
         {
-            throw new Exception ($this->__('Class not found: %s!', $blockClassName));
+            throw new Exception ($this->__('Class not found: %s', $blockClassName));
         }
     }
 
-    public function CreateForm ($klass, & $reference)
+    public function CreateForm ($klass)
     {
-        $windowClassName = $this->GetConfig ()->GetWidgetClassName ($klass);
+        $formClassName = $this->GetConfig ()->getWidgetClassName ($klass);
 
-        $this->LoadDfmFile ($windowClassName, $reference);
+        $result = $this->LoadDfmFile ($formClassName, $form);
+        if ($result)
+        {
+            if (!$this->MainForm) $this->MainForm = $form;
 
-        if (!$this->MainForm) $this->MainForm = $reference;
-
-        $this->_call_user_func ($reference, $reference->OnLoaded);
+            return $form;
+        }
     }
 
-    public function CreateWidget ($klass, & $reference)
+    public function CreateWidget ($klass)
     {
-        $widgetClassName = $this->GetConfig ()->GetWidgetClassName ($klass);
+        $widgetClassName = $this->GetConfig ()->getWidgetClassName ($klass);
 
         if (class_exists ($widgetClassName, true))
         {
-            $reference = new $widgetClassName;
+            $widget = new $widgetClassName;
+
+            $this->LoadDfmFile ($widgetClassName, $widget, false);
+
+            return $widget;
         }
         else
         {
-            throw new Exception ($this->__('Class not found: %s!', $widgetClassName));
+            throw new Exception ($this->__('Class not found: %s', $widgetClassName));
         }
     }
 
-    public function CreateWindow ($klass, & $reference)
+    public function CreateWindow ($klass)
     {
-        $windowClassName = $this->GetConfig ()->GetWidgetClassName ($klass);
+        $windowClassName = $this->GetConfig ()->getWidgetClassName ($klass);
 
-        $this->LoadDfmFile ($windowClassName, $reference);
+        $result = $this->LoadDfmFile ($windowClassName, $window);
+        if ($result)
+        {
+            if (!$this->MainWindow) $this->MainWindow = $window;
 
-        if (!$this->MainWindow) $this->MainWindow = $reference;
-
-        $this->_call_user_func ($reference, $reference->OnLoaded);
+            return $window;
+        }
     }
 
     public function DoEvents ()
@@ -139,6 +152,26 @@ class TApplication extends TObject
     public function GetConfig ()
     {
         return Mage::getConfig ();
+    }
+
+    public function GetErrorHandler ()
+    {
+        $closure = function (
+            $errno, $errstr, $errfile, $errline /* , $errcontext */
+        )
+        {
+            if ($errno == E_RECOVERABLE_ERROR) return true; // ignore casting errors
+
+            echo sprintf ("%s\n%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
+                $this->__('--- ERROR ---'),
+                $this->__('Number'), $errno,
+                $this->__('String'), $errstr,
+                $this->__('File'),   $errfile,
+                $this->__('Line'),   $errline
+            );
+        };
+
+        return $closure;
     }
 
     public function GetDescription ()
@@ -158,13 +191,15 @@ class TApplication extends TObject
 
     public function Init ()
     {
-        $this->_init ();
+        set_error_handler ($this->GetErrorHandler ());
 
         $this->LoadLibrary ('cairo');
         $this->LoadLibrary ('php-gtk', 'php_gtk2');
 
         require GAMUZA_DESKTOP_GTK_DEFINES;
         require GAMUZA_DESKTOP_GTK_ENUMS;
+
+        $this->_init ();
 
         $config = $this->GetConfig ();
 
@@ -175,31 +210,42 @@ class TApplication extends TObject
         register_shutdown_function (array ($this, 'OnFatalError'));
     }
 
-    public function LoadDfmFile ($windowClassName, & $reference)
+    public function LoadDfmFile ($className, & $reference, $showException = true)
     {
-        if (defined ("{$windowClassName}::DFM_FILE"))
+        $dfmFile    = null;
+        $moduleName = null;
+
+        if (defined ("{$className}::DFM_FILE"))
         {
-            $dfmFile = $windowClassName::DFM_FILE;
+            $dfmFile = $className::DFM_FILE;
         }
         else
         {
-            throw new Exception ("No DFM file defined for window class '{$windowClassName}'.");
+            if ($showException) throw new Exception ("No DFM file defined for class '{$className}'.");
         }
 
+        if (empty ($dfmFile)) return false;
+
+        if (strcmp ($className::MODULE_NAME, System\TObject::MODULE_NAME)) $moduleName = $className::MODULE_NAME;
+
         $configModel = $this->GetConfig ();
-        $dfmPath = Mage::getModuleDir ('dfm', $configModel::MODULE_NAME);
+        $dfmPath = Mage::getModuleDir ('dfm', $moduleName ? $moduleName : $configModel::MODULE_NAME);
 
         $handle = fopen ($dfmPath . DS . $dfmFile, 'r');
         if (!$handle)
         {
-            throw new Exception ("Cannot open DFM file '{$dfmFile}' for class '{$windowClassName}'.");
+            /* if ($showException) */ throw new Exception ("Cannot open DFM file '{$dfmFile}' for class '{$className}'.");
+        }
+        else
+        {
+            $reference = $this->_getHelper ()->_parseDfmFileObject ($dfmFile, $handle, $this, $this);
+
+            $this->_call_user_func ($reference, $reference->OnLoaded);
+
+            fclose ($handle);
         }
 
-        $reference = $this->_parseDfmFileObject ($dfmFile, $handle, $this, $this);
-
-        if (!$this->MainWindow) $this->MainWindow = $reference;
-
-        fclose ($handle);
+        return true;
     }
 
     private function LoadLibrary (string $libname, string $soname = null)
@@ -226,14 +272,18 @@ class TApplication extends TObject
         TWindow $parent = null
     )
     {
+        // prevent GTK errors on strings
+        $_text = str_replace ("\0", "", $text);
+        $_title = str_replace ("\0", "", $title);
+
         $_parent = !empty ($parent) ? $parent : $this->ActiveWindow;
         $_icon = !empty ($_parent) ? $_parent->IconFile : null;
         $_window = !empty ($_parent) ? $_parent->Handle : null;
-        $_title = !empty ($title) ? $title : $this->Title;
+        $_title = !empty ($_title) ? $_title : $this->Title;
 
-        $dialog = new GtkMessageDialog ($_window, Gtk::DIALOG_MODAL, $style, $buttons, $text);
+        $dialog = new GtkMessageDialog ($_window, Gtk::DIALOG_MODAL, $style, $buttons, $_text);
 
-        $dialog->set_markup ($this->latin1 ($text));
+        $dialog->set_markup ($this->latin1 ($_text));
         $dialog->set_title ($this->latin1 ($_title));
         $dialog->set_transient_for ($_window);
         $dialog->set_position (Gtk::WIN_POS_CENTER);
@@ -297,6 +347,11 @@ class TApplication extends TObject
         Gtk::main_quit ();
     }
 
+    public function _getHelper (/* string */ $klass = 'desktop/application')
+    {
+        return Mage::helper ($klass);
+    }
+
     private function _init ()
     {
         Mage::$headersSentThrowsException = false;
@@ -305,235 +360,7 @@ class TApplication extends TObject
 
         Mage::app ('admin', 'store', array ('config_model' => Desktop::ConfigModel ()))->setUseSessionInUrl (false);
 
-        Mage::app ()->setErrorHandler (function (
-            $errno, $errstr, $errfile, $errline /* , $errcontext */
-        )
-        {
-            if ($errno == E_RECOVERABLE_ERROR) return true; // cast
-
-            echo sprintf ("%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
-                $this->__('Number'), $errno,
-                $this->__('String'), $errstr,
-                $this->__('File'),   $errfile,
-                $this->__('Line'),   $errline
-            );
-        });
-    }
-
-    private function _parseDfmFileObject ($dfmFile, $handle, $owner, $parent)
-    {
-        /**
-         * Parse token: object
-         */
-        $sline = str_replace (PHP_EOL, chr (0), fgets ($handle));
-        $iline = 1;
-
-        if (feof ($handle))
-        {
-            throw new Exception ("Unexpected end of file in {$dfmFile} at line {$iline}. Expected token 'object'");
-        }
-
-        $result = preg_match ('/[\s]?([a-zA-Z]+)[\s]?([a-zA-Z0-9_]+)[\s]?([:])[\s]?([a-zA-Z0-9_]+)[\s]?/', $sline, $matches);
-
-        $token = $matches [1] ? $matches [1] : $sline;
-        if (!$result || strcmp (strtolower ($token), 'object'))
-        {
-            throw new Exception ("Unexpected value '{$token}' in {$dfmFile} at line {$iline}. Expected 'object objectName : className'");
-        }
-
-        /**
-         * Validate object name & class
-         */
-        $objectName = $matches [2];
-
-        $token = $matches [3];
-        if (strcmp ($token, ':'))
-        {
-            throw new Exception ("Unexpected value '{$token}' in {$dfmFile} at line {$iline}. Expected token ':'");
-        }
-
-        $className = $matches [4];
-
-        /**
-         * Instance
-         */
-        $object = new $className;
-        $object->Name = $objectName;
-        $object->Owner = $owner;
-        $object->Parent = $parent;
-
-        $parent->$objectName = $object;
-
-        /**
-         * By default, a window owns all components that are on it.
-         * In turn, the window is owned by application.
-         */
-        if ($object instanceof TWindow) $owner = $object;
-        if ($owner instanceof TWindow) $owner->$objectName = $object;
-
-        // Add gtkwidget to gtkcontainer
-        if (($object instanceof TWidget && $parent instanceof TAssistant)
-            || ($object instanceof TWidget && $parent instanceof TNotebook))
-        {
-            $parent->AppendPage ($object);
-        }
-        else if ($object instanceof TWidget && $parent instanceof TScrolledWindow)
-        {
-            $parent->AddWithViewport ($object);
-        }
-        else if ($object instanceof TWidget && $parent instanceof TTable)
-        {
-            if ($parent->AutoAttach) $parent->Add ($object);
-        }
-        else if ($object instanceof TTreeStore && $parent instanceof TTreeView)
-        {
-            $parent->SetModel ($object);
-        }
-        else if ($object instanceof TTreeViewColumn && $parent instanceof TTreeView)
-        {
-            $parent->AppendColumn ($object);
-        }
-        else if (($object instanceof TCellRenderer && $parent instanceof TTreeViewColumn)
-                || ($object instanceof TCellRenderer && $parent instanceof TComboBox)
-                || ($object instanceof TWidget && $parent instanceof TDialog))
-        {
-            $parent->PackStart ($object, true);
-        }
-        else if ($object instanceof TWidget && $parent instanceof TContainer)
-        {
-            $parent->Add ($object);
-        }
-
-        /**
-         * Always show widgets
-         */
-        if ($object instanceof TWidget && !($object instanceof TWindow)) $object->Show ();
-
-        /**
-         * Parse remaining
-         */
-        while (!feof ($handle))
-        {
-            $offset = ftell ($handle);
-            $sline = str_replace (PHP_EOL, chr (0), fgets ($handle));
-            ++ $iline;
-
-            if (feof ($handle))
-            {
-                throw new Exception ("Unexpected end of file in {$dfmFile} at line {$iline}. Expected token 'object', 'end' or a property");
-            }
-
-            if (preg_match ('/[\s]?([a-zA-Z]+)[\s]?([a-zA-Z0-9_]+)[\s]?([:])[\s]?([a-zA-Z0-9_]+)[\s]?/', $sline, $matches))
-            {
-                fseek ($handle, $offset);
-
-                $this->_parseDfmFileObject ($dfmFile, $handle, $owner, $object);
-            }
-            else if (preg_match ('/[\s]?([a-zA-Z0-9_]+)[\s]?[=][\s]?(.*)[\s]?/', $sline))
-            {
-                $this->_parseDfmFileProperty ($owner, $object, $sline);
-            }
-            else if (!strlen (trim ($sline)))
-            {
-                continue; // empty line
-            }
-            else
-            {
-                break;
-            }
-
-            ++ $iline;
-        }
-
-        /**
-         * Parse token: end
-         */
-        fseek ($handle, $offset);
-        $sline = str_replace (PHP_EOL, chr (0), fgets ($handle));
-        ++ $iline;
-
-        if (feof ($handle))
-        {
-            throw new Exception ("Unexpected end of file in {$dfmFile} at line {$iline}. Expected token 'end'");
-        }
-
-        if (strcmp (strtolower (trim ($sline)), 'end'))
-        {
-            throw new Exception ("Unexpected value '{$sline}' in {$dfmFile} at line {$iline}. Expected token 'end'");
-        }
-
-        // if (method_exists ($object, '__onevent')) $object->__onevent ();
-        if (method_exists ($object, 'OnLoaded')) $object->OnLoaded ();
-
-        return $object;
-    }
-
-    private function _parseDfmFileProperty ($owner, $object, $sline)
-    {
-        $objectName = get_class ($object);
-
-        preg_match ('/[\s]?([a-zA-Z0-9_]+)[\s]?=[\s]?(.*)[\s]?/', $sline, $matches);
-
-        $property = $matches [1];
-        $value = trim ($matches [2]);
-
-        if (preg_match ("/[\[](.*)[\]]/", $value, $matches))
-        {
-            $result = null;
-
-            $parts = explode (',', $matches [1]);
-            foreach ($parts as $_part)
-            {
-                $result [] = $this->_parseDfmFileValue ($owner, $_part);
-            }
-
-            $value = $result;
-        }
-        else
-        {
-            $value = $this->_parseDfmFileValue ($owner, $value);
-
-            if ((is_callable (array ($owner, $value), true, $callableMethodName) && method_exists ($owner, $value))
-                || (is_callable (array ($object, $value), true, $callableMethodName) && method_exists ($object, $value))
-                || (is_callable (array ($objectName, $value), true, $callableMethodName) && method_exists ($objectName, $value))
-                || (is_callable ($value, true, $callableMethodName) && function_exists ($value))
-            )
-            {
-                $result = $callableMethodName;
-            }
-        }
-
-        $object->$property = $value;
-    }
-
-    private function _parseDfmFileValue ($owner, $value)
-    {
-        $value = trim ($value);
-
-        // Object
-        if (property_exists ($owner, $value) && is_object ($owner->$value))
-        {
-            return $owner->$value;
-        }
-
-        // Constant
-        if (defined ($value))
-        {
-            return constant ($value);
-        }
-
-        // Boolean
-        if (!strcmp (strtolower ($value), 'true'))
-        {
-            return true;
-        }
-        else if (!strcmp (strtolower ($value), 'false'))
-        {
-            return false;
-        }
-
-        // String?
-        return __($this->unquote ($value));
+        Mage::app ()->setErrorHandler ($this->GetErrorHandler ());
     }
 
     /**

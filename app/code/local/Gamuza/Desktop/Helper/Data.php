@@ -43,6 +43,11 @@ class Gamuza_Desktop_Helper_Data extends Mage_Core_Helper_Abstract
         return mb_convert_encoding ($text, 'ISO-8859-1', 'UTF-8');
     }
 
+    public function unquote (/* string */ $text)
+    {
+        return preg_replace ("/[\"\'](.*)[\"\']/", '${1}', $text); // remove quotation marks
+    }
+
     public function utf8 (/* string */ $text)
     {
         return mb_convert_encoding ($text, 'UTF-8', 'ISO-8859-1');

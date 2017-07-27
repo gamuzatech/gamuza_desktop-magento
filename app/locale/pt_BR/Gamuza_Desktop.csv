@@ -5,4 +5,7 @@
 "Hello World!","Olá Mundo!"
 "Quit from Gamuza Desktop?","Sair do Gamuza Desktop?"
 "Cannot load PHP dynamic library: %s","Não foi possível carregar a biblioteca dinâmica PHP: %s"
+Class not found: %s,Classe não encontrada: %s
+--- ERROR ---,--- ERRO ---
+--- FATAL ERROR ---,--- ERRO FATAL ---
 

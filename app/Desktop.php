@@ -29,7 +29,7 @@
 
 if (version_compare (phpversion (), '5.4.0', '<') === true)
 {
-    echo 'It looks like you have an invalid PHP version. Gamuza Desktop supports PHP 5.3.0 or newer.' . PHP_EOL;
+    echo 'It looks like you have an invalid PHP version. Gamuza Desktop supports PHP 5.4.0 or newer.' . PHP_EOL;
 
     exit (255);
 }
@@ -56,6 +56,7 @@ final class Desktop
 
         if (!defined ('GAMUZA_DESKTOP_LIB_PATH'))
         {
+            $desktopAppPath = BP . DS . 'app' . DS . 'code' . DS . 'desktop';
             $desktopLibPath = BP . DS . 'lib' . DS . 'Gamuza' . DS . 'Desktop';
             $desktopGtkPath = $desktopLibPath . DS . 'Gtk';
 
@@ -63,10 +64,9 @@ final class Desktop
             define ('GAMUZA_DESKTOP_GTK_PATH',    $desktopGtkPath);
             define ('GAMUZA_DESKTOP_GTK_DEFINES', $desktopGtkPath . DS . 'defines.php');
             define ('GAMUZA_DESKTOP_GTK_ENUMS',   $desktopGtkPath . DS . 'enums.php');
-        }
 
-        $include_path = get_include_path ();
-        set_include_path ($include_path . PS . GAMUZA_DESKTOP_LIB_PATH . PS . GAMUZA_DESKTOP_GTK_PATH);
+            set_include_path ($desktopAppPath . PS . get_include_path () . PS . GAMUZA_DESKTOP_LIB_PATH . PS . GAMUZA_DESKTOP_GTK_PATH);
+        }
 
         self::$_application = new TApplication ();
 
@@ -92,7 +92,7 @@ final class Desktop
         return self::$_config_model;
     }
 
-    public static function Register ()
+    public static function Init ()
     {
         $autoload = Varien_Autoload::instance ();
 
@@ -105,9 +105,26 @@ final class Desktop
         spl_autoload_register (array ('Desktop', 'Autoload'));
         spl_autoload_register (array ($autoload, 'autoload'));
     }
+
+    public static function Register ($key, $value, $graceful = false)
+    {
+        Mage::unregister ($key);
+
+        Mage::register ($key, $value, $graceful);
+    }
+
+    public static function Registry ($key)
+    {
+        return Mage::registry ($key);
+    }
+
+    public static function Unregister ($key)
+    {
+        Mage::unregister ($key);
+    }
 }
 
-Desktop::Register ();
+Desktop::Init ();
 
 $Application = Desktop::Application ();
 

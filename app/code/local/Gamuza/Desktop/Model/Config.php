@@ -42,12 +42,12 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
         session_write_close ();
     }
 
-    public function GetDescription ()
+    public function getDescription ()
     {
         return $this->__($this->_getStoreConfig ('desktop/general/description'));
     }
 
-    public function GetLanguage ()
+    public function getLanguage ()
     {
         if (empty ($this->_language))
         {
@@ -58,7 +58,17 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
         return $this->_language;
     }
 
-    public function GetWidgetClassName (string $widgetType)
+    public function getImageFileName (string $filename)
+    {
+        return $this->getModuleDir ('images', static::MODULE_NAME) . DS . $filename;
+    }
+
+    public function getMiscFileName (string $filename)
+    {
+        return $this->getModuleDir ('files', static::MODULE_NAME) . DS . $filename;
+    }
+
+    public function getWidgetClassName (string $widgetType)
     {
         if (strpos ($widgetType, '/') === false)
         {
@@ -68,22 +78,12 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
         return $this->getGroupedClassName ('widget', $widgetType);
     }
 
-    public function GetImageFileName (string $filename)
-    {
-        return $this->getModuleDir ('images', static::MODULE_NAME) . DS . $filename;
-    }
-
-    public function GetMiscFileName (string $filename)
-    {
-        return $this->getModuleDir ('files', static::MODULE_NAME) . DS . $filename;
-    }
-
-    public function GetTitle ()
+    public function getTitle ()
     {
         return $this->__($this->_getStoreConfig ('desktop/general/title'));
     }
 
-    public function GetVersion ()
+    public function getVersion ()
     {
         return (string) $this->getNode ('modules/' . static::MODULE_NAME . '/version');
     }
@@ -172,7 +172,7 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
 
         $this->_getCoreSession ()->start ();
 
-        $this->_getLocale ()->setLocale ($this->GetLanguage ());
+        $this->_getLocale ()->setLocale ($this->getLanguage ());
 
         $this->_getTranslator ()->init (Mage_Core_Model_App_Area::AREA_ADMINHTML, true);
     }
