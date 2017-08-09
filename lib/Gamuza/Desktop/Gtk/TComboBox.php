@@ -28,6 +28,22 @@
  */
 
 /**
+ * Class GamuzaComboBox
+ */
+class GamuzaComboBox extends GtkComboBox
+{
+    public function __construct (GtkTreeModel $model = null)
+    {
+        if (!empty ($model))
+        {
+            return call_user_func ('parent::__construct', $model);
+        }
+
+        parent::__construct ();
+    }
+}
+
+/**
  * Class TComboBox
  *
  * @property int           $Active
@@ -50,11 +66,11 @@ class TComboBox extends TBin
     /**
      * Events
      */
-    public function __construct (/* TTreeModel $model */)
+    public function __construct (TTreeModel $model = null)
     {
         parent::__construct ();
 
-        $this->Handle = new GtkComboBox (/* $model->Handle */);
+        $this->Handle = new GtkComboBox ($model ? $model->Handle : null);
     }
 
     /**
@@ -117,11 +133,6 @@ class TComboBox extends TBin
         $this->Handle->insert_text ($position, $text);
     }
 
-    public function PackStart (TCellRenderer $cell_renderer)
-    {
-        $this->Handle->pack_start ($cell_renderer->Handle);
-    }
-
     public function Popdown ()
     {
         $this->Handle->popdown ();
@@ -155,11 +166,6 @@ class TComboBox extends TBin
     public function SetAddTearoffs (bool $add_tearoffs)
     {
         $this->Handle->set_add_tearoffs ($add_tearoffs);
-    }
-
-    public function SetAttributes (TCellRenderer $cell_renderer, string $attribute, int $column)
-    {
-        $this->Handle->set_attributes ($cell_renderer->Handle, $attribute, intval ($column));
     }
 
     public function SetColumnSpanColumn (int $column_span)

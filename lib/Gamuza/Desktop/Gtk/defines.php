@@ -300,9 +300,9 @@
 
 // enum TMetricType
 {
-    define ('metPixels',      Gtk::PIXELS);
-    define ('metInches',      Gtk::INCHES);
-    define ('metCentimeters', Gtk::CENTIMETERS);
+    define ('mtrPixels',      Gtk::PIXELS);
+    define ('mtrInches',      Gtk::INCHES);
+    define ('mtrCentimeters', Gtk::CENTIMETERS);
 }
 
 // enum TMovementStep
@@ -335,21 +335,21 @@
 
 // enum TObjectType
 {
-    define ('obtInvalid',   Gobject::TYPE_INVALID);
-    define ('obtNone',      Gobject::TYPE_NONE);
-    define ('obtInterface', Gobject::TYPE_INTERFACE);
-    define ('obtChar',      Gobject::TYPE_CHAR);
-    define ('obtBoolean',   Gobject::TYPE_BOOLEAN);
-    define ('obtLong',      Gobject::TYPE_LONG);
-    define ('obtEnum',      Gobject::TYPE_ENUM);
-    define ('obtFlags',     Gobject::TYPE_FLAGS);
-    define ('obtDouble',    Gobject::TYPE_DOUBLE);
-    define ('obtString',    Gobject::TYPE_STRING);
-    define ('obtPointer',   Gobject::TYPE_POINTER);
-    define ('obtBoxed',     Gobject::TYPE_BOXED);
-    define ('obtParam',     Gobject::TYPE_PARAM);
-    define ('obtObject',    Gobject::TYPE_OBJECT);
-    define ('obtPHPValue',  Gobject::TYPE_PHP_VALUE);
+    define ('objInvalid',   Gobject::TYPE_INVALID);
+    define ('objNone',      Gobject::TYPE_NONE);
+    define ('objInterface', Gobject::TYPE_INTERFACE);
+    define ('objChar',      Gobject::TYPE_CHAR);
+    define ('objBoolean',   Gobject::TYPE_BOOLEAN);
+    define ('objLong',      Gobject::TYPE_LONG);
+    define ('objEnum',      Gobject::TYPE_ENUM);
+    define ('objFlags',     Gobject::TYPE_FLAGS);
+    define ('objDouble',    Gobject::TYPE_DOUBLE);
+    define ('objString',    Gobject::TYPE_STRING);
+    define ('objPointer',   Gobject::TYPE_POINTER);
+    define ('objBoxed',     Gobject::TYPE_BOXED);
+    define ('objParam',     Gobject::TYPE_PARAM);
+    define ('objObject',    Gobject::TYPE_OBJECT);
+    define ('objPHPValue',  Gobject::TYPE_PHP_VALUE);
 }
 
 // enum TPackType

@@ -30,7 +30,7 @@
 /**
  * Class TTreeIter
  */
-class TTreeIter extends GBoxed
+abstract class TTreeIter extends GtkTreeIter
 {
     // dummy
 }

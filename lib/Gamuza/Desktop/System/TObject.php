@@ -50,7 +50,8 @@ class TObject
     const EVENT_CALLBACK   = 2;
     const EVENT_HANDLER    = 3;
 
-    protected $_events = null;
+    protected $_properties = array ();
+    protected $_events = array ();
     protected $_handle = null;
 
     /**
@@ -98,17 +99,34 @@ class TObject
 
     public function __event ($var, $val, $method = 'set')
     {
-        if (!empty ($var) && empty ($val))
-        {
-            if (!strcmp ($method, 'get')) return $this->_events [$var][self::EVENT_CALLBACK];
-            else $this->__disconnect ($var);
-        }
-        else if (!empty ($var) && strpos ($var, 'On') === 0 && !empty ($val))
-        {
-            $signal = $this->__toSnakeCase (substr ($var, 2));
+        if (empty ($var)) return null;
 
-            $this->__connect ($signal, $var, $val);
+        if (strpos ($var, 'On') === 0)
+        {
+            if (empty ($val))
+            {
+                if (!strcmp ($method, 'get')) return $this->_events [$var][self::EVENT_CALLBACK];
+
+                else $this->__disconnect ($var);
+            }
+            else
+            {
+                $signal = $this->__toSnakeCase (substr ($var, 2));
+
+                $this->__connect ($signal, $var, $val);
+            }
         }
+        else
+        {
+            if (!strcmp ($method, 'get')) return $this->GetProperty ($var);
+
+            else $this->SetProperty ($var, $val);
+        }
+    }
+
+    public function __gui ()
+    {
+        // nothing
     }
 
     public function __signal ()
@@ -184,7 +202,12 @@ class TObject
 
     public function GetProperty (/* string */ $property_name)
     {
-        return $this->Handle->get_property ($property_name);
+        // return $this->Handle->get_property ($property_name);
+
+        if (array_key_exists ($property_name, $this->_properties))
+        {
+            return $this->_properties [$property_name];
+        }
     }
 
     public function IsConnected (/* int */ $handler_id)
@@ -221,7 +244,9 @@ class TObject
 
     public function SetProperty (/* string */ $property_name, /* mixed */ $value)
     {
-        $this->Handle->set_property ($property_name, $value);
+        // $this->Handle->set_property ($property_name, $value);
+
+        $this->_properties [$property_name] = $value;
     }
 
     public static function SignalListIDs (/* int */ $gtype)
@@ -269,9 +294,24 @@ class TObject
         return $this->_getHelper ()->unquote ($text);
     }
 
+    public function _getApp ($code = '', $type = 'store', $options = array ())
+    {
+        return Mage::app ($code, $type, $options);
+    }
+
+    public function _getConfig ()
+    {
+        return Mage::getConfig ();
+    }
+
     public function _getHelper (/* string */ $klass = 'desktop')
     {
         return Mage::helper ($klass);
+    }
+
+    public function _getModuleDir ($type, $moduleName)
+    {
+        return Mage::getModuleDir ($type, $moduleName);
     }
 
     public function __toSnakeCase (/* string */ $text)
@@ -290,7 +330,7 @@ class TObject
         $expr = new \Mage_Core_Model_Translate_Expr (array_shift ($args), static::MODULE_NAME);
         array_unshift ($args, $expr);
 
-        return Mage::app ()->getTranslator ()->translate ($args);
+        return $this->_getApp ()->getTranslator ()->translate ($args);
     }
 
     protected function _call_user_func ()
@@ -424,8 +464,8 @@ class TObject
 
         switch ($var)
         {
-        case 'Handle': { $result = $this->getHandle ();                break;      }
-        default:       { $result = $this->__event ($var, null, 'get'); /* event */ }
+        case 'Handle': { $result = $this->getHandle ();                break;     }
+        default:       { $result = $this->__event ($var, null, 'get'); /* rest */ }
         }
 
         return $result;
@@ -435,8 +475,8 @@ class TObject
     {
         switch ($var)
         {
-        case 'Handle': { $this->setHandle ($val);            break;      }
-        default:       { $this->__event ($var, $val, 'set'); /* event */ }
+        case 'Handle': { $this->setHandle ($val);            break;     }
+        default:       { $this->__event ($var, $val, 'set'); /* rest */ }
         }
     }
 }

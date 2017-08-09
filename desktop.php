@@ -59,7 +59,7 @@ try
     {
         echo 'Gamuza Desktop is not installed yet, please complete install wizard first.' . PHP_EOL;
 
-        exit (255);
+        exit (1);
     }
     */
 
@@ -74,6 +74,6 @@ catch (Exception $e)
 
     // echo ' ! Application Exception : ' . $e->getMessage () . PHP_EOL;
 
-    // exit (255);
+    // exit (1);
 }
 

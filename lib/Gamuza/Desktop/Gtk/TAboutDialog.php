@@ -48,13 +48,47 @@
 class TAboutDialog extends TDialog
 {
     /**
+     * Components
+     */
+    public $ActionArea;
+
+    /**
      * Events
      */
+    public $OnEmailClicked;
+    public $OnUrlClicked;
+
     public function __construct ()
     {
         parent::__construct ();
 
         $this->Handle = new GtkAboutDialog ();
+
+        $this->Modal = true;
+
+        $this->ActionArea = new THButtonBox ();
+        $this->ActionArea->Handle = $this->Handle->action_area;
+
+        foreach ($this->ActionArea->Handle->get_children () as $child)
+        {
+            $button = new TButton ();
+            $button->Handle = $child;
+
+            $child->set_data ('__tobject', $button);
+        }
+
+        self::__signal ();
+    }
+
+    public function __signal ()
+    {
+        foreach ($this->ActionArea->Handle as $child)
+        {
+            if ($child instanceof GtkButton) $child->connect ('clicked', function () { $this->Destroy (); });
+        }
+
+        $this->EmailHook = function ($object, $address) { if ($this->OnEmailClicked) $this->_call_user_func ($this, $this->OnEmailClicked, $address); };
+        $this->UrlHook = function ($object, $address) { if ($this->OnUrlClicked) $this->_call_user_func ($this, $this->OnUrlClicked, $address); };
     }
 
     /**
@@ -132,12 +166,12 @@ class TAboutDialog extends TDialog
 
     public function SetComments (string $comments)
     {
-        $this->Handle->set_comments ($comments);
+        $this->Handle->set_comments ($this->latin1 ($comments));
     }
 
     public function SetCopyright (string $copyright)
     {
-        $this->Handle->set_copyright ($copyright);
+        $this->Handle->set_copyright ($this->latin1 ($copyright));
     }
 
     public function SetDocumenters (array $documenters)
@@ -152,7 +186,7 @@ class TAboutDialog extends TDialog
 
     public function SetLicense (string $license)
     {
-        $this->Handle->set_license ($license);
+        $this->Handle->set_license ($this->latin1 ($license));
     }
 
     public function SetLogo (GdkPixbuf $logo)
@@ -165,9 +199,17 @@ class TAboutDialog extends TDialog
         $this->Handle->set_logo_icon_name ($icon_name);
     }
 
+    /**
+     * since GTK+ 2.12, please use GtkAboutDialog::set_program_name()
+     */
+    public function SetName (string $name)
+    {
+        $this->Handle->set_program_name ($name);
+    }
+
     public function SetTranslatorCredits (string $translator_credits)
     {
-        $this->Handle->set_translator_credits ($translator_credits);
+        $this->Handle->set_translator_credits ($this->latin1 ($translator_credits));
     }
 
     public function SetUrlHook (callback $callback)
@@ -177,7 +219,7 @@ class TAboutDialog extends TDialog
 
     public function SetVersion (string $version)
     {
-        $this->Handle->set_version ($version);
+        $this->Handle->set_version ($this->latin1 ($version));
     }
 
     public function SetWebsite (string $website)
@@ -187,7 +229,7 @@ class TAboutDialog extends TDialog
 
     public function SetWebsiteLabel (string $website_label)
     {
-        $this->Handle->set_website_label ($website_label);
+        $this->Handle->set_website_label ($this->latin1 ($website_label));
     }
 
     /**

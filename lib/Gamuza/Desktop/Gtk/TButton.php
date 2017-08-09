@@ -28,6 +28,22 @@
  */
 
 /**
+ * Class GamuzaButton
+ */
+class GamuzaButton extends GtkButton
+{
+    public function __construct (string $label = null, /* bool */ $use_underline = false)
+    {
+        if ($label !== null || $use_underline !== false)
+        {
+            return call_user_func ('parent::__construct', $label, $use_underline);
+        }
+
+        parent::__construct ();
+    }
+}
+
+/**
  * Class TButton
  *
  * @property array        $Alignment
@@ -50,11 +66,11 @@ class TButton extends TBin
     /**
      * Events
      */
-    public function __construct (/* string $label = null, bool $use_underline = false */)
+    public function __construct (string $label = null, /* bool */ $use_underline = false)
     {
         parent::__construct ();
 
-        $this->Handle = new GtkButton (/* $label, $use_underline */);
+        $this->Handle = new GamuzaButton ($label, $use_underline);
     }
 
     /**

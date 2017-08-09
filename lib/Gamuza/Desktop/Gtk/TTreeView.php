@@ -28,6 +28,22 @@
  */
 
 /**
+ * Class GamuzaTreeView
+ */
+class GamuzaTreeView extends GtkTreeView
+{
+    public function __construct (GtkTreeModel $model = null)
+    {
+        if (!empty ($model))
+        {
+            return call_user_func ('parent::__construct', $model);
+        }
+
+        parent::__construct ();
+    }
+}
+
+/**
  * Class TTreeView
  *
  * @property callback           $ColumnDragFunction
@@ -79,11 +95,11 @@ class TTreeView extends TContainer
     /**
      * Events
      */
-    public function __construct (/* [ TTreeModel $model ] */)
+    public function __construct (TTreeModel $model = null)
     {
         parent::__construct ();
 
-        $this->Handle = new GtkTreeView ( /* $model */ );
+        $this->Handle = new GamuzaTreeView ($model ? $model->Handle : null);
 
         $this->_selection = new TTreeSelection ();
         $this->_selection->Handle = $this->Handle->get_selection ();

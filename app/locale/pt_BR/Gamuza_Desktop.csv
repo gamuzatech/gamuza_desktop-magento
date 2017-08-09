@@ -1,3 +1,4 @@
+"Visual Component Library for Magento","Biblioteca de Componentes Visuais para Magento"
 "Invalid object '%s' class '%s' type '%s'","Objeto inválido '%s' classe '%s' tipo '%s'"
 "Cannot call event '%s' from '%s' class '%s' type '%s'","Não foi possível chamar o evento '%s' de '%s' classe '%s' tipo '%s'"
 "%s - Exception","%s - Ocorreu um erro"
@@ -5,7 +6,7 @@
 "Hello World!","Olá Mundo!"
 "Quit from Gamuza Desktop?","Sair do Gamuza Desktop?"
 "Cannot load PHP dynamic library: %s","Não foi possível carregar a biblioteca dinâmica PHP: %s"
-Class not found: %s,Classe não encontrada: %s
---- ERROR ---,--- ERRO ---
---- FATAL ERROR ---,--- ERRO FATAL ---
+"Class not found: %s","Classe não encontrada: %s"
+"--- ERROR ---","--- ERRO ---"
+"--- FATAL ERROR ---","--- ERRO FATAL ---"
 

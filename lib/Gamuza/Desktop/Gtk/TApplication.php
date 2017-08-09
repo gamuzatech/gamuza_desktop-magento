@@ -58,6 +58,13 @@ class TApplication extends TObject
      */
     public $OnTerminate;
 
+    public function __construct ()
+    {
+        parent::__construct ();
+
+        $this->Name = 'TApplication';
+    }
+
     public function OnFatalError ()
     {
         $error = error_get_last ();
@@ -79,14 +86,18 @@ class TApplication extends TObject
      */
     public function CreateBlock ($klass)
     {
-        $blockClassName = $this->GetConfig ()->getBlockClassName ($klass);
+        $blockClassName = $this->_getConfig ()->getBlockClassName ($klass);
 
         if (class_exists ($blockClassName, true))
         {
             $block = new $blockClassName;
-
-            $this->LoadDfmFile ($blockClassName, $block, false);
-
+            /*
+            $this->LoadDfmFile ($blockClassName, $block, array(
+                'owner' => $this,
+                'parent' => $this,
+                'show_exception' => false
+            ));
+            */
             return $block;
         }
         else
@@ -97,26 +108,36 @@ class TApplication extends TObject
 
     public function CreateForm ($klass)
     {
-        $formClassName = $this->GetConfig ()->getWidgetClassName ($klass);
+        $formClassName = $this->_getConfig ()->getWidgetClassName ($klass);
 
-        $result = $this->LoadDfmFile ($formClassName, $form);
-        if ($result)
+        if (class_exists ($formClassName, true))
         {
-            if (!$this->MainForm) $this->MainForm = $form;
+            $form = new $formClassName;
+
+            $result = $this->LoadDfmFile ($formClassName, $form);
+            if ($result && !$this->MainForm) $this->MainForm = $form;
 
             return $form;
         }
+        else
+        {
+            throw new Exception ($this->__('Class not found: %s', $formClassName));
+        }
     }
 
-    public function CreateWidget ($klass)
+    public function CreateWidget ($klass, TObject $owner = null, TObject $parent = null)
     {
-        $widgetClassName = $this->GetConfig ()->getWidgetClassName ($klass);
+        $widgetClassName = $this->_getConfig ()->getWidgetClassName ($klass);
 
         if (class_exists ($widgetClassName, true))
         {
             $widget = new $widgetClassName;
 
-            $this->LoadDfmFile ($widgetClassName, $widget, false);
+            $this->LoadDfmFile ($widgetClassName, $widget, array(
+                'owner' => $owner,
+                'parent' => $parent,
+                'show_exception' => false
+            ));
 
             return $widget;
         }
@@ -128,14 +149,20 @@ class TApplication extends TObject
 
     public function CreateWindow ($klass)
     {
-        $windowClassName = $this->GetConfig ()->getWidgetClassName ($klass);
+        $windowClassName = $this->_getConfig ()->getWidgetClassName ($klass);
 
-        $result = $this->LoadDfmFile ($windowClassName, $window);
-        if ($result)
+        if (class_exists ($windowClassName, true))
         {
-            if (!$this->MainWindow) $this->MainWindow = $window;
+            $window = new $windowClassName;
+
+            $result = $this->LoadDfmFile ($windowClassName, $window);
+            if ($result && !$this->MainWindow) $this->MainWindow = $window;
 
             return $window;
+        }
+        else
+        {
+            throw new Exception ($this->__('Class not found: %s', $windowClassName));
         }
     }
 
@@ -147,11 +174,6 @@ class TApplication extends TObject
     public function EventsPending ()
     {
         return Gtk::events_pending ();
-    }
-
-    public function GetConfig ()
-    {
-        return Mage::getConfig ();
     }
 
     public function GetErrorHandler ()
@@ -199,9 +221,9 @@ class TApplication extends TObject
         require GAMUZA_DESKTOP_GTK_DEFINES;
         require GAMUZA_DESKTOP_GTK_ENUMS;
 
-        $this->_init ();
+        $this->Reinit ();
 
-        $config = $this->GetConfig ();
+        $config = $this->_getConfig ();
 
         $this->Description = $config->GetDescription ();
         $this->Title       = $config->GetTitle ();
@@ -210,10 +232,16 @@ class TApplication extends TObject
         register_shutdown_function (array ($this, 'OnFatalError'));
     }
 
-    public function LoadDfmFile ($className, & $reference, $showException = true)
+    public function LoadDfmFile (string $className, TObject & $reference, array $options = array ())
     {
         $dfmFile    = null;
         $moduleName = null;
+        $owner      = !empty ($options ['owner']) ? $options ['owner'] : $this;
+        $parent     = !empty ($options ['parent']) ? $options ['parent'] : $this;
+        $showException = isset ($options ['show_exception']) ? $options ['show_exception'] : true;
+
+        $reference->Owner  = $owner;
+        $reference->Parent = $parent;
 
         if (defined ("{$className}::DFM_FILE"))
         {
@@ -228,8 +256,8 @@ class TApplication extends TObject
 
         if (strcmp ($className::MODULE_NAME, System\TObject::MODULE_NAME)) $moduleName = $className::MODULE_NAME;
 
-        $configModel = $this->GetConfig ();
-        $dfmPath = Mage::getModuleDir ('dfm', $moduleName ? $moduleName : $configModel::MODULE_NAME);
+        $configModel = $this->_getConfig ();
+        $dfmPath = $this->_getModuleDir ('dfm', $moduleName ? $moduleName : $configModel::MODULE_NAME);
 
         $handle = fopen ($dfmPath . DS . $dfmFile, 'r');
         if (!$handle)
@@ -238,7 +266,7 @@ class TApplication extends TObject
         }
         else
         {
-            $reference = $this->_getHelper ()->_parseDfmFileObject ($dfmFile, $handle, $this, $this);
+            $reference = $this->_getHelper ()->_parseDfmFileObject ($dfmFile, $handle, $owner, $parent);
 
             $this->_call_user_func ($reference, $reference->OnLoaded);
 
@@ -298,6 +326,8 @@ class TApplication extends TObject
 
     public function Reinit ()
     {
+        $this->_reset ();
+
         $this->_init ();
     }
 
@@ -305,7 +335,7 @@ class TApplication extends TObject
     {
         try
         {
-            Gtk::main();
+            Gtk::main ();
 
             $this->_call_user_func ($this, $this->OnTerminate);
         }
@@ -354,13 +384,18 @@ class TApplication extends TObject
 
     private function _init ()
     {
+        $this->_getApp ('admin', 'store', array ('config_model' => Desktop::ConfigModel ()))->setUseSessionInUrl (false);
+
+        $this->_getApp ()->setErrorHandler ($this->GetErrorHandler ());
+
+        $this->_getConfig ()->cleanCache ();
+    }
+
+    private function _reset ()
+    {
         Mage::$headersSentThrowsException = false;
 
         Mage::reset ();
-
-        Mage::app ('admin', 'store', array ('config_model' => Desktop::ConfigModel ()))->setUseSessionInUrl (false);
-
-        Mage::app ()->setErrorHandler ($this->GetErrorHandler ());
     }
 
     /**

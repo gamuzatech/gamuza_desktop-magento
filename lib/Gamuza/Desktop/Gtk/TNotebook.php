@@ -277,7 +277,7 @@ class TNotebook extends TContainer
     {
         switch ($var)
         {
-        case 'CurentPage':      { $this->SetCurrentPage ($val);     break; }
+        case 'CurrentPage':     { $this->SetCurrentPage ($val);     break; }
         case 'MenuLabel':       { $this->SetMenuLabel ($val);       break; }
         case 'MenuLabelText':   { $this->SetMenuLabelText ($val);   break; }
         case 'Scrollable':      { $this->SetScrollable ($val);      break; }

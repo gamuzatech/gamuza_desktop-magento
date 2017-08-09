@@ -301,9 +301,9 @@ abstract class TMessageType
 
 abstract class TMetricType
 {
-    const metPixels      = Gtk::PIXELS;
-    const metInches      = Gtk::INCHES;
-    const metCentimeters = Gtk::CENTIMETERS;
+    const mtrPixels      = Gtk::PIXELS;
+    const mtrInches      = Gtk::INCHES;
+    const mtrCentimeters = Gtk::CENTIMETERS;
 }
 
 abstract class TMovementStep
@@ -336,21 +336,21 @@ abstract class TOrientation
 
 abstract class TObjectType
 {
-    const obtInvalid   = Gobject::TYPE_INVALID;
-    const obtNone      = Gobject::TYPE_NONE;
-    const obtInterface = Gobject::TYPE_INTERFACE;
-    const obtChar      = Gobject::TYPE_CHAR;
-    const obtBoolean   = Gobject::TYPE_BOOLEAN;
-    const obtLong      = Gobject::TYPE_LONG;
-    const obtEnum      = Gobject::TYPE_ENUM;
-    const obtFlags     = Gobject::TYPE_FLAGS;
-    const obtDouble    = Gobject::TYPE_DOUBLE;
-    const obtString    = Gobject::TYPE_STRING;
-    const obtPointer   = Gobject::TYPE_POINTER;
-    const obtBoxed     = Gobject::TYPE_BOXED;
-    const obtParam     = Gobject::TYPE_PARAM;
-    const obtObject    = Gobject::TYPE_OBJECT;
-    const obtPHPValue  = Gobject::TYPE_PHP_VALUE;
+    const objInvalid   = Gobject::TYPE_INVALID;
+    const objNone      = Gobject::TYPE_NONE;
+    const objInterface = Gobject::TYPE_INTERFACE;
+    const objChar      = Gobject::TYPE_CHAR;
+    const objBoolean   = Gobject::TYPE_BOOLEAN;
+    const objLong      = Gobject::TYPE_LONG;
+    const objEnum      = Gobject::TYPE_ENUM;
+    const objFlags     = Gobject::TYPE_FLAGS;
+    const objDouble    = Gobject::TYPE_DOUBLE;
+    const objString    = Gobject::TYPE_STRING;
+    const objPointer   = Gobject::TYPE_POINTER;
+    const objBoxed     = Gobject::TYPE_BOXED;
+    const objParam     = Gobject::TYPE_PARAM;
+    const objObject    = Gobject::TYPE_OBJECT;
+    const objPHPValue  = Gobject::TYPE_PHP_VALUE;
 }
 
 abstract class TPackType

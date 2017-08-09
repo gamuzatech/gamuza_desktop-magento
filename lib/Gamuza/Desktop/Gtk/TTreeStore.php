@@ -28,6 +28,22 @@
  */
 
 /**
+ * Class GamuzaTreeStore
+ */
+class GamuzaTreeStore extends GtkTreeStore
+{
+    public function __construct (array $columnTypes = null)
+    {
+        if (!empty ($columnTypes))
+        {
+            return call_user_func_array ('parent::__construct', $columnTypes);
+        }
+
+        parent::__construct ();
+    }
+}
+
+/**
  * Class TTreeStore
  *
  * @property array $ColumnTypes
@@ -40,14 +56,16 @@ class TTreeStore extends System\TObject
     use TTreeSortable;
     // use Traversable;
 
+    protected $_column_types;
+
     /**
      * Events
      */
-    public function __construct (/* TType $type_column_0 [, TType $type_column_1 [, TType $type_column_2, ... ]] */)
+    public function __construct (array $columnTypes = null)
     {
         parent::__construct ();
 
-        $this->Handle = new GtkTreeStore (/* $type_column_0, $type_column_1, $type_column_2, ... */);
+        $this->Handle = new GamuzaTreeStore ($columnTypes);
     }
 
     /**
@@ -72,6 +90,11 @@ class TTreeStore extends System\TObject
     public function Clear ()
     {
         $this->Handle->clear ();
+    }
+
+    public function GetColumnTypes ()
+    {
+        return $this->_column_types;
     }
 
     public function GetValue (TTreeIter $iter, int $n_column)
@@ -143,9 +166,9 @@ class TTreeStore extends System\TObject
         $this->Handle->swap ($iter1, $iter2);
     }
 
-    public function SetColumnTypes ($columns)
+    public function SetColumnTypes (array $columnTypes)
     {
-        $this->Handle->set_column_types ($columns);
+        $this->Handle->set_column_types ($this->_column_types = $columnTypes);
     }
 
     /**
@@ -168,7 +191,7 @@ class TTreeStore extends System\TObject
     {
         switch ($var)
         {
-        case 'ColumnTypes': { $this->setColumnTypes ($val); break; }
+        case 'ColumnTypes': { $this->SetColumnTypes ($val); break; }
         default:            { parent::__set ($var, $val);          }
         }
     }

@@ -192,25 +192,10 @@ class TTreeViewColumn extends TObject
     {
         return $this->Handle->get_width ();
     }
-    /*
-    public function PackStart ($child)
-    {
-        $this->Handle->pack_start ($child->Handle);
-    }
-    */
+
     public function SetAlignment (double $xalign)
     {
         $this->Handle->set_alignment ($xalign);
-    }
-
-    public function SetAttributes (TCellRenderer $cell_renderer, $attribute, $column)
-    {
-        $this->Handle->set_attributes ($cell_renderer->Handle, $attribute, $column);
-    }
-
-    public function SetCellDataFunc (TCellRenderer $renderer, $func, $user_data = null)
-    {
-        $this->Handle->set_cell_data_func ($renderer->Handle, $func, $user_data);
     }
 
     public function SetClickable ($value)

@@ -35,7 +35,7 @@ $PHP -v
 DIRNAME=$(dirname "$0")
 cd $DIRNAME
 
-cat << __EOF__ | $PHP $ARGS > $TEMPFILE 2>&1
+cat << __EOF__ | $PHP $ARGS > $TEMPFILE
 <?php require 'desktop.php';
 __EOF__
 

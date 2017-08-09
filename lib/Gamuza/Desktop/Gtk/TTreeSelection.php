@@ -52,7 +52,12 @@ class TTreeSelection extends System\TObject
 
     public function GetSelected ()
     {
-        return $this->Handle->get_selected ();
+        list ($model, $iter) = $this->Handle->get_selected ();
+
+        $store = new TTreeStore ();
+        $store->Handle = $model;
+
+        return array ($store, /* TTreeIter */ $iter);
     }
 
     public function GetSelectedRows ()

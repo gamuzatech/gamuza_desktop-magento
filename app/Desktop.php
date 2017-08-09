@@ -27,11 +27,11 @@
  * These files are distributed with gamuza_desktop-magento at http://github.com/gamuzatech/.
  */
 
-if (version_compare (phpversion (), '5.4.0', '<') === true)
+if (version_compare (phpversion (), '5.4.0', '<') === true || strcmp (php_sapi_name (), 'cli'))
 {
-    echo 'It looks like you have an invalid PHP version. Gamuza Desktop supports PHP 5.4.0 or newer.' . PHP_EOL;
+    echo _('Whoops, it looks like you have an invalid PHP version. Gamuza Desktop supports PHP CLI version 5.4.0 or newer.') . PHP_EOL;
 
-    exit (255);
+    exit (1);
 }
 
 ini_set ('memory_limit', -1);

@@ -34,7 +34,7 @@ trait TCellLayout // extends TInterface
 {
     public function AddAttribute (TCellRenderer $cell, string $attribute, int $column)
     {
-        $this->Handle->add_attribute ($cell, $attribute, $column);
+        $this->Handle->add_attribute ($cell->Handle, $attribute, $column);
     }
 
     public function Clear ()
@@ -44,12 +44,12 @@ trait TCellLayout // extends TInterface
 
     public function ClearAttributes (TCellRenderer $cell)
     {
-        $this->Handle->clear_attributes ($cell);
+        $this->Handle->clear_attributes ($cell->Handle);
     }
 
     public function PackEnd (TCellRenderer $cell, /* bool */ $expand = false)
     {
-        $this->Handle->pack_end ($cell, $expand);
+        $this->Handle->pack_end ($cell->Handle, $expand);
     }
 
     public function PackStart (TCellRenderer $cell, /* bool */ $expand = false)
@@ -59,17 +59,17 @@ trait TCellLayout // extends TInterface
 
     public function Reorder (TCellRenderer $cell, int $position)
     {
-        $this->Handle->reorder ($cell, $position);
+        $this->Handle->reorder ($cell->Handle, $position);
     }
 
-    public function SetAttributes (TCellRenderer $cell, $attribute, $column)
+    public function SetAttributes (TCellRenderer $cell, string $attribute, int $column)
     {
-        $this->Handle->set_attributes ($cell, $attribute, $column);
+        $this->Handle->set_attributes ($cell->Handle, $attribute, intval ($column));
     }
 
-    public function SetCellDataFunc (TCellRenderer $cell, callback $callback)
+    public function SetCellDataFunc (TCellRenderer $cell, callback $callback, /* mixed */ $user_data = null)
     {
-        $this->Handle->set_cell_data_func ($cell, $callback);
+        $this->Handle->set_cell_data_func ($cell->Handle, $callback, $user_data);
     }
 }
 

@@ -58,18 +58,36 @@ class TAssistant extends TWindow
 
     public function __construct ()
     {
-        parent::__construct ();
+        TBin::__construct ();
 
         $this->Handle = new GtkAssistant ();
 
+        self::__gui ();
+
+        self::__signal ();
+    }
+
+    public function __gui ()
+    {
+        parent::__gui ();
+
         /**
-         * Action Area
+         * ActionArea
          */
         $this->AddActionWidget ($EventBox = new TEventBox ());
         $this->ActionArea = new THBox ();
         $this->ActionArea->Handle = $EventBox->ParentWidget;
 
-        self::__signal ();
+        /**
+         * Escape
+         */
+        foreach ($this->ActionArea->Handle->get_children () as $child)
+        {
+            if ($child instanceof GtkButton && !strcmp ($child->get_label (), 'gtk-cancel'))
+            {
+                $child->add_accelerator ('clicked', $this->AccelGroup->Handle, Gdk::KEY_Escape, 0, 0);
+            }
+        }
     }
 
     public function __signal ()
