@@ -279,6 +279,11 @@ class TObject
         $this->Handle->unblock ($handler_id);
     }
 
+    public function cast (/* object */ $instance, /* string */ $klass)
+    {
+	    return $this->_getHelper ()->cast ($instance, $klass);
+    }
+
     public function latin1 (/* string */ $text)
     {
         return $this->_getHelper ()->latin1 ($text);
@@ -312,6 +317,11 @@ class TObject
     public function _getModuleDir ($type, $moduleName)
     {
         return Mage::getModuleDir ($type, $moduleName);
+    }
+
+    public function __toPascalCase (/* string */ $text)
+    {
+        return $this->_getHelper ()->__toPascalCase ($text);
     }
 
     public function __toSnakeCase (/* string */ $text)

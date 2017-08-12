@@ -81,10 +81,14 @@ class TListStore extends System\TObject
                 $result [] = is_string ($_item) ? $this->latin1 ($_item) : $_item;
             }
 
-            return $this->Handle->append ($result);
+            $iter = $this->Handle->append ($result);
+        }
+        else
+        {
+            $iter = $this->Handle->append ();
         }
 
-        return $this->Handle->append ();
+        return $this->cast ($iter, 'TTreeIter');
     }
 
     public function Clear ()

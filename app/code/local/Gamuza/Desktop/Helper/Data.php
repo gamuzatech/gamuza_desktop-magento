@@ -31,6 +31,28 @@ class Gamuza_Desktop_Helper_Data extends Mage_Core_Helper_Abstract
 {
     const DATE_FORMAT = 'EEE dd MMM yyyy HH:mm:ss zzz';
 
+    const LATIN1_FORMAT = 'ISO-8859-1';
+    const UTF8_FORMAT   = 'UTF-8';
+
+    const CAST_PATTERN = '/^O:\d+:"[^"]++"/';
+
+    const PASCAL_CASE_PATTERN = '/(?:^|_)([a-z])/';
+
+    const SNAKE_CASE_PATTERN = '/(?<!^)[A-Z]/';
+    const SNAKE_CASE_REPLACE = '_$0';
+
+    const UNQUOTE_PATTERN = "/[\"\'](.*)[\"\']/";
+    const UNQUOTE_REPLACE = '${1}';
+
+    public function cast (/* object */ $instance, /* string */ $klass)
+    {
+        $replace = 'O:' . strlen ($klass) . ':"' . $klass . '"';
+
+	    $result = unserialize (preg_replace (self::CAST_PATTERN, $replace, serialize ($instance)));
+
+        return $result;
+    }
+
     public function date ($date = null, $format = null, $locale = null, $useTimezone = true)
     {
         $_format = $format ? $format : static::DATE_FORMAT;
@@ -40,25 +62,29 @@ class Gamuza_Desktop_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function latin1 (/* string */ $text)
     {
-        return mb_convert_encoding ($text, 'ISO-8859-1', 'UTF-8');
+        return mb_convert_encoding ($text, self::LATIN1_FORMAT, self::UTF8_FORMAT);
     }
 
     public function unquote (/* string */ $text)
     {
-        return preg_replace ("/[\"\'](.*)[\"\']/", '${1}', $text); // remove quotation marks
+        return preg_replace (self::UNQUOTE_PATTERN, self::UNQUOTE_REPLACE, $text); // remove quotation marks
     }
 
     public function utf8 (/* string */ $text)
     {
-        return mb_convert_encoding ($text, 'UTF-8', 'ISO-8859-1');
+        return mb_convert_encoding ($text, self::UTF8_FORMAT, self::LATIN1_FORMAT);
+    }
+
+    public function __toPascalCase (/* string */ $text)
+    {
+        $result = preg_replace_callback (self::PASCAL_CASE_PATTERN, function ($matches) { return strtoupper ($matches [1]); }, $text);
+
+        return $result;
     }
 
     public function __toSnakeCase (/* string */ $text)
     {
-        $pattern = '/(?<!^)[A-Z]/';
-        $replacement = '_$0';
-
-        $result = strtolower (preg_replace ($pattern, $replacement, $text));
+        $result = strtolower (preg_replace (self::SNAKE_CASE_PATTERN, self::SNAKE_CASE_REPLACE, $text));
 
         return $result;
     }

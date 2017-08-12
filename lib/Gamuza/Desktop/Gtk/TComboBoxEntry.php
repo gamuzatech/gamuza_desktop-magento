@@ -28,6 +28,22 @@
  */
 
 /**
+ * Class GamuzaComboBoxEntry
+ */
+class GamuzaComboBoxEntry extends GtkComboBoxEntry
+{
+    public function __construct (GtkTreeModel $model = null)
+    {
+        if (!empty ($model))
+        {
+            return call_user_func ('parent::__construct', $model);
+        }
+
+        parent::__construct ();
+    }
+}
+
+/**
  * Class TComboBoxEntry
  *
  * @property int $TextColumn
@@ -39,11 +55,11 @@ class TComboBoxEntry extends TComboBox
     /**
      * Events
      */
-    public function __construct (/* TTreeModel $model = null */)
+    public function __construct (TTreeModel $model = null)
     {
         parent::__construct ();
 
-        $this->Handle = new GtkComboBoxEntry (/* $model->Handle */);
+        $this->Handle = new GamuzaComboBoxEntry ($model ? $model->Handle : null);
     }
 
     /**

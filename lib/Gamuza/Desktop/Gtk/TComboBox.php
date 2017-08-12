@@ -70,7 +70,7 @@ class TComboBox extends TBin
     {
         parent::__construct ();
 
-        $this->Handle = new GtkComboBox ($model ? $model->Handle : null);
+        $this->Handle = new GamuzaComboBox ($model ? $model->Handle : null);
     }
 
     /**
