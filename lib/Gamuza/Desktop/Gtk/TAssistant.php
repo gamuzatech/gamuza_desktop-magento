@@ -105,7 +105,7 @@ class TAssistant extends TWindow
 
     public function __on_prepare ($object, $page, array $event)
     {
-        $tobject = $page->get_data ('__tobject');
+        $tobject = $page->get_data (self::TOBJECT);
 
         $this->_call_user_func ($this, $this->OnPrepare, $tobject, $event);
     }
@@ -137,7 +137,7 @@ class TAssistant extends TWindow
     {
         $page = $this->Handle->get_nth_page ($page_num);
 
-        return $page->get_data ('__tobject');
+        return $page->get_data (self::TOBJECT);
     }
 
     public function GetPageComplete ()

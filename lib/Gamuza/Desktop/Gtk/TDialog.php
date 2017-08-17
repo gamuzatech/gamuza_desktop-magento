@@ -49,19 +49,26 @@ class TDialog extends TWindow
      */
     public function __construct (/* [string $title = null [, TWidget $parent_window = null [, TDialogFlags $dialog_flags = 0 [, array (TButton, TResponseType)]]]] */)
     {
-        parent::__construct ();
+        TBin::__construct ();
 
         $this->Handle = new GtkDialog (/* $title, $parent_window, $dialog_flags, array () */);
 
+        self::__gui ();
+
+        self::__signal (); // parent
+    }
+
+    public function __gui ()
+    {
+        TBin::__gui ();
+
         $this->ActionArea = new THButtonBox ();
         $this->ActionArea->Handle = $this->Handle->action_area;
-        $this->Handle->action_area->set_data ('__tobject', $this->ActionArea);
+        $this->Handle->action_area->set_data (self::TOBJECT, $this->ActionArea);
 
         $this->ContentArea = new TVBox ();
         $this->ContentArea->Handle = $this->Handle->vbox;
-        $this->Handle->vbox->set_data ('__tobject', $this->ContentArea);
-
-        parent::__signal ();
+        $this->Handle->vbox->set_data (self::TOBJECT, $this->ContentArea);
     }
 
     /**
@@ -88,7 +95,7 @@ class TDialog extends TWindow
 
     public function GetActionArea ()
     {
-        return $this->Handle->action_area->get_data ('__tobject');
+        return $this->Handle->action_area->get_data (self::TOBJECT);
     }
 
     public function GetHasSeparator ()
@@ -98,7 +105,7 @@ class TDialog extends TWindow
 
     public function GetVBox ()
     {
-        return $this->Handle->vbox->get_data ('__tobject');
+        return $this->Handle->vbox->get_data (self::TOBJECT);
     }
 
     public function PackStart (TWidget $widget)

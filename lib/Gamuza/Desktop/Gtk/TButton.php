@@ -108,7 +108,7 @@ class TButton extends TBin
     {
         $image = $this->Handle->get_image ();
 
-        return $image->get_data ('__tobject');
+        return $image->get_data (self::TOBJECT);
     }
 
     public function GetLabel ()

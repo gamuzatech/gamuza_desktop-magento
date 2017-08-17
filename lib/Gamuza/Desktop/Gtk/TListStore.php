@@ -71,24 +71,20 @@ class TListStore extends System\TObject
     /**
      * Methods
      */
-    public function Append ($items = null)
+    public function Append (array $items = null)
     {
         if (!empty ($items))
         {
-            $result = null;
+            $result = array ();
             foreach ($items as $_item)
             {
                 $result [] = is_string ($_item) ? $this->latin1 ($_item) : $_item;
             }
 
-            $iter = $this->Handle->append ($result);
-        }
-        else
-        {
-            $iter = $this->Handle->append ();
+            return $this->Handle->append ($result);
         }
 
-        return $this->cast ($iter, 'TTreeIter');
+        return $this->Handle->append ();
     }
 
     public function Clear ()

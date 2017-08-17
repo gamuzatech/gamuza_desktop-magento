@@ -443,7 +443,7 @@ abstract class TWidget extends TObject
 
     public function GetRootWindow ()
     {
-        return $this->Handle->get_roow_window ();
+        return $this->Handle->get_root_window ();
     }
 
     public function GetScreen ()

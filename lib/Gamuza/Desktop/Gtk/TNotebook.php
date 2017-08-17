@@ -101,7 +101,7 @@ class TNotebook extends TContainer
     {
         $page = $this->Handle->get_nth_page ($page_num);
 
-        return $page->get_data ('__tobject');
+        return $page->get_data (self::TOBJECT);
     }
 
     public function GetScrollable ()

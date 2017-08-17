@@ -60,9 +60,18 @@ class TAboutDialog extends TDialog
 
     public function __construct ()
     {
-        parent::__construct ();
+        TBin::__construct ();
 
         $this->Handle = new GtkAboutDialog ();
+
+        self::__gui ();
+
+        self::__signal ();
+    }
+
+    public function __gui ()
+    {
+        TBin::__gui ();
 
         $this->Modal = true;
 
@@ -74,14 +83,14 @@ class TAboutDialog extends TDialog
             $button = new TButton ();
             $button->Handle = $child;
 
-            $child->set_data ('__tobject', $button);
+            $child->set_data (self::TOBJECT, $button);
         }
-
-        self::__signal ();
     }
 
     public function __signal ()
     {
+        parent::__signal ();
+
         foreach ($this->ActionArea->Handle as $child)
         {
             if ($child instanceof GtkButton) $child->connect ('clicked', function () { $this->Destroy (); });

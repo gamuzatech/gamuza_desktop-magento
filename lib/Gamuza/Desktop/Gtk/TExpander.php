@@ -73,7 +73,7 @@ class TExpander extends TBin
     {
         $widget = $this->Handle->get_label_widget ();
 
-        return $widget->get_data ('__tobject');
+        return $widget->get_data (self::TOBJECT);
     }
 
     public function getSpacing ()

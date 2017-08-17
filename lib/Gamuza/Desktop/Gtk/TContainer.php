@@ -83,7 +83,7 @@ abstract class TContainer extends TWidget
 
         foreach ($this->Handle->get_children () as $child)
         {
-            $result [] = $child->get_data ('__tobject');
+            $result [] = $child->get_data (self::TOBJECT);
         }
 
         return $result;

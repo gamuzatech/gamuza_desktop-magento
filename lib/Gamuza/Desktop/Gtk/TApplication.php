@@ -91,13 +91,9 @@ class TApplication extends TObject
         if (class_exists ($blockClassName, true))
         {
             $block = new $blockClassName;
-            /*
-            $this->LoadDfmFile ($blockClassName, $block, array(
-                'owner' => $this,
-                'parent' => $this,
-                'show_exception' => false
-            ));
-            */
+
+            // $this->LoadDfmFile ($blockClassName);
+
             return $block;
         }
         else
@@ -112,10 +108,8 @@ class TApplication extends TObject
 
         if (class_exists ($formClassName, true))
         {
-            $form = new $formClassName;
-
-            $result = $this->LoadDfmFile ($formClassName, $form);
-            if ($result && !$this->MainForm) $this->MainForm = $form;
+            $form = $this->LoadDfmFile ($formClassName);
+            if ($form && !$this->MainForm) $this->MainForm = $form;
 
             return $form;
         }
@@ -131,13 +125,7 @@ class TApplication extends TObject
 
         if (class_exists ($widgetClassName, true))
         {
-            $widget = new $widgetClassName;
-
-            $this->LoadDfmFile ($widgetClassName, $widget, array(
-                'owner' => $owner,
-                'parent' => $parent,
-                'show_exception' => false
-            ));
+            $widget = $this->LoadDfmFile ($widgetClassName, $owner, $parent);
 
             return $widget;
         }
@@ -153,10 +141,9 @@ class TApplication extends TObject
 
         if (class_exists ($windowClassName, true))
         {
-            $window = new $windowClassName;
+            $window = $this->LoadDfmFile ($windowClassName);
 
-            $result = $this->LoadDfmFile ($windowClassName, $window);
-            if ($result && !$this->MainWindow) $this->MainWindow = $window;
+            if ($window && !$this->MainWindow) $this->MainWindow = $window;
 
             return $window;
         }
@@ -182,7 +169,10 @@ class TApplication extends TObject
             $errno, $errstr, $errfile, $errline /* , $errcontext */
         )
         {
-            if ($errno == E_RECOVERABLE_ERROR) return true; // ignore casting errors
+            /**
+             * Ignore casting errors and declarations should be compatible.
+             */
+            if (in_array ($errno, array (E_RECOVERABLE_ERROR, E_STRICT))) return true;
 
             echo sprintf ("%s\n%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
                 $this->__('--- ERROR ---'),
@@ -232,48 +222,41 @@ class TApplication extends TObject
         register_shutdown_function (array ($this, 'OnFatalError'));
     }
 
-    public function LoadDfmFile (string $className, TObject & $reference, array $options = array ())
+    public function LoadDfmFile (string $className, $owner = null, $parent = null)
     {
-        $dfmFile    = null;
-        $moduleName = null;
-        $owner      = !empty ($options ['owner']) ? $options ['owner'] : $this;
-        $parent     = !empty ($options ['parent']) ? $options ['parent'] : $this;
-        $showException = isset ($options ['show_exception']) ? $options ['show_exception'] : true;
-
-        $reference->Owner  = $owner;
-        $reference->Parent = $parent;
+        $owner  = $owner ? $owner : $this;
+        $parent = $parent ? $parent : $this;
 
         if (defined ("{$className}::DFM_FILE"))
         {
-            $dfmFile = $className::DFM_FILE;
+            $configModel = $this->_getConfig ();
+            $moduleName  = strcmp ($className::MODULE_NAME, parent::MODULE_NAME) ? $className::MODULE_NAME : $configModel::MODULE_NAME;
+            $filePath = $this->_getModuleDir ('dfm', $moduleName);
+            $fileName = $className::DFM_FILE;
+
+            $handle = fopen ($filePath . DS . $fileName, 'r');
+            if (!$handle)
+            {
+                throw new Exception (__("Cannot open DFM file '%s' for class '%s'", $fileName, $className));
+            }
+            else
+            {
+                $object = $this->_getHelper ()->_parseDfmFileObject ($fileName, $handle, $owner, $parent);
+
+                fclose ($handle);
+            }
         }
         else
         {
-            if ($showException) throw new Exception ("No DFM file defined for class '{$className}'.");
+            $object = new $className;
+
+            $object->Owner  = $owner;
+            $object->Parent = $parent;
+
+            if (method_exists ($object, 'OnLoaded')) $object->OnLoaded ();
         }
 
-        if (empty ($dfmFile)) return false;
-
-        if (strcmp ($className::MODULE_NAME, System\TObject::MODULE_NAME)) $moduleName = $className::MODULE_NAME;
-
-        $configModel = $this->_getConfig ();
-        $dfmPath = $this->_getModuleDir ('dfm', $moduleName ? $moduleName : $configModel::MODULE_NAME);
-
-        $handle = fopen ($dfmPath . DS . $dfmFile, 'r');
-        if (!$handle)
-        {
-            /* if ($showException) */ throw new Exception ("Cannot open DFM file '{$dfmFile}' for class '{$className}'.");
-        }
-        else
-        {
-            $reference = $this->_getHelper ()->_parseDfmFileObject ($dfmFile, $handle, $owner, $parent);
-
-            $this->_call_user_func ($reference, $reference->OnLoaded);
-
-            fclose ($handle);
-        }
-
-        return true;
+        return $object;
     }
 
     private function LoadLibrary (string $libname, string $soname = null)

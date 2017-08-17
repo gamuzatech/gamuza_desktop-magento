@@ -79,15 +79,15 @@ class TTooltips extends TObject
 
         switch ($var)
         {
-        case 'ActiveTipsData': { $result = $this->Handle->active_tips_data;                   break; }
-        case 'Delay':          { $result = $this->Handle->delay;                              break; }
-        case 'Enabled':        { $result = $this->Handle->enabled;                            break; }
-        case 'Timer':          { $result = $this->Handle->timer_tag;                          break; }
-        case 'TipLabel':       { $result = $this->Handle->tip_label->get_data ('__tobject');  break; }
-        case 'TipWindow':      { $result = $this->Handle->tip_window->get_data ('__tobject'); break; }
-        case 'TipsDataList':   { $result = $this->Handle->tips_data_list;                     break; }
-        case 'UseStickyDelay': { $result = $this->Handle->use_sticky_delay;                   break; }
-        default:               { $result = parent::__get ($var);                                     }
+        case 'ActiveTipsData': { $result = $this->Handle->active_tips_data;                     break; }
+        case 'Delay':          { $result = $this->Handle->delay;                                break; }
+        case 'Enabled':        { $result = $this->Handle->enabled;                              break; }
+        case 'Timer':          { $result = $this->Handle->timer_tag;                            break; }
+        case 'TipLabel':       { $result = $this->Handle->tip_label->get_data (self::TOBJECT;   break; }
+        case 'TipWindow':      { $result = $this->Handle->tip_window->get_data (self::TOBJECT); break; }
+        case 'TipsDataList':   { $result = $this->Handle->tips_data_list;                       break; }
+        case 'UseStickyDelay': { $result = $this->Handle->use_sticky_delay;                     break; }
+        default:               { $result = parent::__get ($var);                                       }
         }
 
         return $result;

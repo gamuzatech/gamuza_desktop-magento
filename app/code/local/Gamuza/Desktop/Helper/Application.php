@@ -74,14 +74,14 @@ class Gamuza_Desktop_Helper_Application extends Gamuza_Desktop_Helper_Data
         $object->Owner = $owner;
         $object->Parent = $parent;
 
-        $parent->$objectName = $object;
+        $parent->{$objectName} = $object;
 
         /**
          * By default, a window owns all components that are on it.
          * In turn, the window is owned by application.
          */
         if ($object instanceof TWindow) $owner = $object;
-        if ($owner instanceof TWindow) $owner->$objectName = $object;
+        if ($owner instanceof TWindow) $owner->{$objectName} = $object;
 
         // Add gtkwidget to gtkcontainer
         if (($object instanceof TWidget && $parent instanceof TAssistant)
@@ -119,7 +119,7 @@ class Gamuza_Desktop_Helper_Application extends Gamuza_Desktop_Helper_Data
         /**
          * Always show widgets
          */
-        if ($object instanceof TWidget && !($object instanceof TWindow)) $object->Show ();
+        if ($object instanceof TWidget && $object instanceof TWindow == false) $object->Show ();
 
         /**
          * Parse remaining
@@ -174,7 +174,6 @@ class Gamuza_Desktop_Helper_Application extends Gamuza_Desktop_Helper_Data
             throw new Exception ("Unexpected value '{$sline}' in {$dfmFile} at line {$iline}. Expected token 'end'");
         }
 
-        // if (method_exists ($object, '__onevent')) $object->__onevent ();
         if (method_exists ($object, 'OnLoaded')) $object->OnLoaded ();
 
         return $object;
@@ -215,7 +214,7 @@ class Gamuza_Desktop_Helper_Application extends Gamuza_Desktop_Helper_Data
             }
         }
 
-        $object->$property = $value;
+        $object->{$property} = $value;
     }
 
     public function _parseDfmFileValue (TObject $owner, mixed $value)
@@ -223,9 +222,9 @@ class Gamuza_Desktop_Helper_Application extends Gamuza_Desktop_Helper_Data
         $value = trim ($value);
 
         // Object
-        if (property_exists ($owner, $value) && is_object ($owner->$value))
+        if (property_exists ($owner, $value) && is_object ($owner->{$value}))
         {
-            return $owner->$value;
+            return $owner->{$value};
         }
 
         // Constant

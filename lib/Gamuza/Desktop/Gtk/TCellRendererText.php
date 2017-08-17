@@ -30,6 +30,8 @@
 /**
  * Class TCellRendererText
  *
+ * @property int $FixedHeightFromFont
+ *
  * @property string|array $OnEdited
  */
 class TCellRendererText extends TCellRenderer
@@ -50,6 +52,30 @@ class TCellRendererText extends TCellRenderer
     public function SetFixedHeightFromFont (int $number_of_rows)
     {
         $this->Handle->set_fixed_height_from_font ($number_of_rows);
+    }
+
+    /**
+     * Properties
+     */
+    function __get ($var)
+    {
+        $result = null;
+
+        switch ($var)
+        {
+            default: { $result = parent::__get ($var); }
+        }
+
+        return $result;
+    }
+
+    function __set ($var, $val)
+    {
+        switch ($var)
+        {
+            case 'FixedHeightFromFont': { $this->SetFixedHeightFromFont ($val); break; }
+            default:                    { parent::__set ($var, $val);                  }
+        }
     }
 }
 

@@ -28,42 +28,10 @@
  */
 
 /**
- * Class TBin
+ * Class TTreePath
  */
-abstract class TBin extends TContainer
+/* abstract */ class TTreePath extends GtkTreePath
 {
-    /**
-     * Methods
-     */
-    public function GetChild ()
-    {
-        $child = $this->Handle->get_child ();
-
-        return $child->get_data (self::TOBJECT);
-    }
-
-    /**
-     * Properties
-     */
-    function __get ($var)
-    {
-        $result = null;
-
-        switch ($var)
-        {
-        case 'Child': { $result = $this->GetChild (); break; }
-        default:      { $result = parent::__get ($var);      }
-        }
-
-        return $result;
-    }
-
-    function __set ($var, $val)
-    {
-        switch ($var)
-        {
-        default: { parent::__set ($var, $val); }
-        }
-    }
+    // dummy
 }
 

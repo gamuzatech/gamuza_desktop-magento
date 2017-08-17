@@ -75,7 +75,7 @@ class TToolbar extends TContainer
     {
         $widget = $this->Handle->get_nth_item ($n);
 
-        return $widget->get_data ('__tobject');
+        return $widget->get_data (self::TOBJECT);
     }
 
     public function GetOrientation ()

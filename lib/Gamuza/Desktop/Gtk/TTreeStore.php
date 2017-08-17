@@ -75,7 +75,7 @@ class TTreeStore extends System\TObject
     {
         if (is_object ($parent) || !empty ($items))
         {
-            $result = null;
+            $result = array ();
             foreach ($items as $_item)
             {
                 $result [] = is_string ($_item) ? $this->latin1 ($_item) : $_item;

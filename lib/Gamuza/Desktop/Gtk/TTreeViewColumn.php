@@ -184,7 +184,7 @@ class TTreeViewColumn extends TObject
 
         if (is_object ($widget))
         {
-            return $widget->get_data ('__tobject');
+            return $widget->get_data (self::TOBJECT);
         }
     }
 

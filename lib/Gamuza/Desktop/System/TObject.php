@@ -50,6 +50,8 @@ class TObject
     const EVENT_CALLBACK   = 2;
     const EVENT_HANDLER    = 3;
 
+    const TOBJECT = '__System_TObject';
+
     protected $_properties = array ();
     protected $_events = array ();
     protected $_handle = null;
@@ -101,7 +103,7 @@ class TObject
     {
         if (empty ($var)) return null;
 
-        if (strpos ($var, 'On') === 0)
+        if (strpos ($var, 'On') === 0 && strlen ($var) > 2)
         {
             if (empty ($val))
             {
@@ -134,9 +136,20 @@ class TObject
         // nothing
     }
 
-    public function __on_event (GObject $object, array $event)
+    public function __on_event ()
     {
-        $this->_call_user_func ($this, $event [self::EVENT_CALLBACK]);
+        $last = ($num = func_num_args ()) - 1;
+        $gobject = func_get_arg (0);
+        $event   = func_get_arg ($last);
+
+        $args = array ($this, $event [self::EVENT_CALLBACK]);
+
+        for ($i = 1; $i < $last; $i ++)
+        {
+            $args [] = func_get_arg ($i);
+        }
+
+        call_user_func_array (array ($this, '_call_user_func'), $args);
     }
 
     /**
@@ -239,7 +252,7 @@ class TObject
     {
         $this->_handle = $object;
 
-        $this->SetData ('__tobject', $this);
+        $this->SetData (self::TOBJECT, $this);
     }
 
     public function SetProperty (/* string */ $property_name, /* mixed */ $value)
@@ -281,7 +294,7 @@ class TObject
 
     public function cast (/* object */ $instance, /* string */ $klass)
     {
-	    return $this->_getHelper ()->cast ($instance, $klass);
+        return $this->_getHelper ()->cast ($instance, $klass);
     }
 
     public function latin1 (/* string */ $text)
@@ -355,19 +368,15 @@ class TObject
 
             // Retrieve arguments from stack
             $stack_args = array ();
-            $stack = debug_backtrace();
+            $stack = debug_backtrace ();
             foreach ($stack as $element)
             {
                 if ((array_key_exists ('object', $element) && !strcmp (get_class ($element ['object']), get_class ($object)))
                     && (array_key_exists ('function', $element) && !strcmp ($element ['function'], __FUNCTION__)))
                 {
                     $stack_args = $element ['args'];
-                    if (count ($stack_args))
-                    {
-                        unset ($stack_args [1]); // remove method name
 
-                        // $stack_args = array_values ($stack_args);
-                    }
+                    array_splice ($stack_args, 1, 1);
                 }
             }
 
@@ -452,7 +461,7 @@ class TObject
 
             if (is_object ($methodName) && !strcmp (get_class ($methodName), 'Closure'))
             {
-                return $methodName ($object, $stack_args);
+                return call_user_func_array ($methodName, $stack_args);
             }
 
             throw new Exception (sprintf ("%s: %s", __METHOD__, $this->__("Cannot call event '%s' from '%s' class '%s' type '%s'",

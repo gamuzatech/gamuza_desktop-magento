@@ -117,7 +117,7 @@ class TWindow extends TBin
         /**
          * Call-time pass-by-reference has been removed in PHP 5.4
          */
-        $klass = new StdClass ();
+        $klass = new stdClass ();
         $klass->value = & $canClose;
 
         $result = $this->_call_user_func ($this, $this->OnCloseQuery, $klass);

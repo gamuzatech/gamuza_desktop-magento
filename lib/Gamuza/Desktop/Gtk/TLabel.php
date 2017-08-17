@@ -62,7 +62,7 @@ class TLabel extends TMisc
     {
         parent::__construct ();
 
-        $this->Handle = new GtkLabel ($text, $parse_mnemonic);
+        $this->Handle = new GtkLabel ($this->latin1 ($text), $parse_mnemonic);
     }
 
     /**

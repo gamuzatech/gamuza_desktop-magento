@@ -110,7 +110,7 @@ class TComboBox extends TBin
     {
         $widget = $this->Handle->get_model ();
 
-        return $widget->get_data ('__tobject');
+        return $widget->get_data (self::TOBJECT);
     }
 
     public function GetPopupAccessible ()

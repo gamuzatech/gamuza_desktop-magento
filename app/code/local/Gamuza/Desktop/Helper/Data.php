@@ -48,7 +48,7 @@ class Gamuza_Desktop_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $replace = 'O:' . strlen ($klass) . ':"' . $klass . '"';
 
-	    $result = unserialize (preg_replace (self::CAST_PATTERN, $replace, serialize ($instance)));
+        $result = unserialize (preg_replace (self::CAST_PATTERN, $replace, serialize ($instance)));
 
         return $result;
     }

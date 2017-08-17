@@ -30,6 +30,10 @@
 /**
  * Class TCellRendererToggle
  *
+ * @property bool $Activatable
+ * @property bool $Active
+ * @property bool $Radio
+ *
  * @property string|array $OnToggled
  */
 class TCellRendererToggle extends TCellRenderer
@@ -43,7 +47,7 @@ class TCellRendererToggle extends TCellRenderer
 
         $this->Handle = new GtkCellRendererToggle ();
 
-        $this->Handle->set_property ('activatable', true);
+        $this->Handle->Activatable = true;
     }
 
     /**
@@ -51,7 +55,7 @@ class TCellRendererToggle extends TCellRenderer
      */
     public function GetActivatable ()
     {
-        return $this->Handle->get_property ('activatable');
+        return $this->Handle->get_activatable ();
     }
 
     public function GetActive ()
@@ -64,17 +68,17 @@ class TCellRendererToggle extends TCellRenderer
         return $this->handle->get_radio ();
     }
 
-    public function SetActivatable ($value)
+    public function SetActivatable (bool $value)
     {
-        $this->Handle->set_property ('activatable', $value);
+        $this->Handle->set_activatable ($value);
     }
 
-    public function SetActive ($value)
+    public function SetActive (bool $value)
     {
         $this->Handle->set_active ($value);
     }
 
-    public function SetRadio ($value)
+    public function SetRadio (bool $value)
     {
         $this->handle->set_radio ($value);
     }
@@ -88,9 +92,10 @@ class TCellRendererToggle extends TCellRenderer
 
         switch ($var)
         {
-        case 'Active': { $result = $this->getActive ();  break; }
-        case 'Radio':  { $result = $this->getRadio ();   break; }
-        default:       { $result = parent::__get ($var);        }
+        case 'Activatable': { $result = $this->GetActivatable (); break; }
+        case 'Active':      { $result = $this->GetActive ();      break; }
+        case 'Radio':       { $result = $this->GetRadio ();       break; }
+        default:            { $result = parent::__get ($var);            }
         }
 
         return $result;
@@ -100,9 +105,10 @@ class TCellRendererToggle extends TCellRenderer
     {
         switch ($var)
         {
-        case 'Active': { $this->setActive ($val);    break; }
-        case 'Radio':  { $this->setRadio ($val);     break; }
-        default:       { parent::__set ($var, $val);        }
+        case 'Activatable': { $this->SetActivatable ($val); break; }
+        case 'Active':      { $this->SetActive ($val);      break; }
+        case 'Radio':       { $this->SetRadio ($val);       break; }
+        default:            { parent::__set ($var, $val);          }
         }
     }
 }

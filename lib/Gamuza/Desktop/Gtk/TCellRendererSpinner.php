@@ -28,42 +28,18 @@
  */
 
 /**
- * Class TBin
+ * Class TCellRendererSpinner
  */
-abstract class TBin extends TContainer
+class TCellRendererSpinner extends TCellRenderer
 {
     /**
-     * Methods
+     * Events
      */
-    public function GetChild ()
+    public function __construct ()
     {
-        $child = $this->Handle->get_child ();
+        parent::__construct ();
 
-        return $child->get_data (self::TOBJECT);
-    }
-
-    /**
-     * Properties
-     */
-    function __get ($var)
-    {
-        $result = null;
-
-        switch ($var)
-        {
-        case 'Child': { $result = $this->GetChild (); break; }
-        default:      { $result = parent::__get ($var);      }
-        }
-
-        return $result;
-    }
-
-    function __set ($var, $val)
-    {
-        switch ($var)
-        {
-        default: { parent::__set ($var, $val); }
-        }
+        $this->Handle = new GtkCellRendererSpinner ();
     }
 }
 
