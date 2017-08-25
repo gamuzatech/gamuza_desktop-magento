@@ -52,7 +52,7 @@ class Gamuza_Desktop_Widget_Welcome extends TForm
 
     public function WelcomeCloseQuery (TObject $sender, stdClass $canClose)
     {
-        $response = $this->Owner->MessageBox ($this->__('Quit from Gamuza Desktop?'), $this->Title, btnYesNo, msgQuestion);
+        $response = $this->Owner->MessageBox ($this->__('Quit from Gamuza Desktop?'), $this->Title, msgQuestion, btnYesNo);
 
         if ($response == resYes) $this->Owner->Quit ();
         else $canClose->value = false;
@@ -65,7 +65,7 @@ class Gamuza_Desktop_Widget_Welcome extends TForm
 
     public function Button1OnClick (TObject $sender)
     {
-        $this->Owner->MessageBox ($this->__('Hello World!'), $this->Title, btnOkCancel, msgInfo);
+        $this->Owner->MessageBox ($this->__('Hello World!'), $this->Title, msgQuestion, btnOkCancel);
     }
 }
 

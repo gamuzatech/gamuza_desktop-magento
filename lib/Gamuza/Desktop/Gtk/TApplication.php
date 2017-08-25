@@ -278,8 +278,10 @@ class TApplication extends TObject
     }
 
     public function MessageBox (
-        string $text, string $title = null,
-        /* TButtonsType */ $buttons = btnOk, /* TMessageType */ $style = msgInfo,
+        string $text,
+        string $title = null,
+        TMessageType $style = null,
+        TButtonsType $buttons = null,
         TWindow $parent = null
     )
     {
@@ -291,8 +293,10 @@ class TApplication extends TObject
         $_icon = !empty ($_parent) ? $_parent->IconFile : null;
         $_window = !empty ($_parent) ? $_parent->Handle : null;
         $_title = !empty ($_title) ? $_title : $this->Title;
+        $_style = !empty ($style) ? $style : msgInfo;
+        $_buttons = !empty ($buttons) ? $buttons : btnOk;
 
-        $dialog = new GtkMessageDialog ($_window, Gtk::DIALOG_MODAL, $style, $buttons, $_text);
+        $dialog = new GtkMessageDialog ($_window, Gtk::DIALOG_MODAL, $_style, $_buttons, $_text);
 
         $dialog->set_markup ($this->latin1 ($_text));
         $dialog->set_title ($this->latin1 ($_title));
@@ -347,7 +351,7 @@ class TApplication extends TObject
 
     public function ShowException (Exception $e)
     {
-        $this->MessageBox ($e->getMessage (), $this->__("%s - Exception", $this->Title), btnOk, msgError);
+        $this->MessageBox ($e->getMessage (), $this->__("%s - Exception", $this->Title), msgError);
     }
 
     public function Terminate (/* int */ $error_code = 0)

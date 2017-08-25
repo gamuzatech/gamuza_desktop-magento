@@ -73,7 +73,7 @@ class TTreeStore extends System\TObject
      */
     public function Append (TTreeIter $parent = null, array $items = null)
     {
-        if (is_object ($parent) || !empty ($items))
+        if (is_array ($items) && count ($items) > 0)
         {
             $result = array ();
             foreach ($items as $_item)
@@ -84,7 +84,7 @@ class TTreeStore extends System\TObject
             return $this->Handle->append ($parent, $result);
         }
 
-        return $this->Handle->append ();
+        return $this->Handle->append ($parent);
     }
 
     public function Clear ()
@@ -95,13 +95,6 @@ class TTreeStore extends System\TObject
     public function GetColumnTypes ()
     {
         return $this->_column_types;
-    }
-
-    public function GetValue (TTreeIter $iter, int $n_column)
-    {
-        $result = $this->Handle->get_value ($iter, $n_column);
-
-        return is_string ($result) ? $this->utf8 ($result) : $result;
     }
 
     public function Insert (int $position, TTreeIter $parent, array $items)

@@ -28,6 +28,22 @@
  */
 
 /**
+ * Class GamuzaArrow
+ */
+class GamuzaArrow extends GtkArrow
+{
+    public function __construct (TArrowType $direction = null, TShadowType $shadow_type = null)
+    {
+        if ($direction !== null && $shadow_type !== false)
+        {
+            return call_user_func ('parent::__construct', $direction, $shadow_type);
+        }
+
+        parent::__construct (arrUp, shaNone);
+    }
+}
+
+/**
  * Class TArrow
  */
 class TArrow extends TMisc
@@ -35,11 +51,11 @@ class TArrow extends TMisc
     /**
      * Events
      */
-    public function __construct (/* TArrowType $direction, TShadowType $shadow_type */)
+    public function __construct (TArrowType $direction = null, TShadowType $shadow_type = null)
     {
         parent::__construct ();
 
-        $this->Handle = new GtkButton (/* $direction, $shadow_type */);
+        $this->Handle = new GamuzaArrow ($direction, $shadow_type);
     }
 
     /**

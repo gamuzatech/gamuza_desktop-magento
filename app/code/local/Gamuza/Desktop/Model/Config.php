@@ -58,6 +58,11 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
         return $this->_language;
     }
 
+    public function getIconFileName (string $filename)
+    {
+        return $this->getModuleDir ('icons', static::MODULE_NAME) . DS . $filename;
+    }
+
     public function getImageFileName (string $filename)
     {
         return $this->getModuleDir ('images', static::MODULE_NAME) . DS . $filename;
@@ -142,6 +147,12 @@ class Gamuza_Desktop_Model_Config extends Mage_Core_Model_Config
         case 'dfm':
         {
             $dir .= DS . 'dfm';
+
+            break;
+        }
+        case 'icons':
+        {
+            $dir .= DS . 'icons';
 
             break;
         }

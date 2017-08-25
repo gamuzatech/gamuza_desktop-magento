@@ -68,7 +68,7 @@ class TCalendar extends TWidget
 
     public function GetDate ()
     {
-        $this->Handle->get_date ();
+        return $this->Handle->get_date ();
     }
 
     public function GetDisplayOptions ()
@@ -115,8 +115,8 @@ class TCalendar extends TWidget
 
         switch ($var)
         {
-        case 'Date':           { $result = $this->getDate ();           break; }
-        case 'DisplayOptions': { $result = $this->getDisplayOptions (); break; }
+        case 'Date':           { $result = $this->GetDate ();           break; }
+        case 'DisplayOptions': { $result = $this->GetDisplayOptions (); break; }
         default:               { $result = parent::__get ($var);               }
         }
 

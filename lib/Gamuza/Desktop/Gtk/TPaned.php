@@ -61,25 +61,29 @@ abstract class TPaned extends TContainer
 
     public function GetChild1 ()
     {
-        $this->Handle->get_child1 ();
+        $child1 = $this->Handle->get_child1 ();
+
+        return $child1->get_data (self::TOBJECT);
     }
 
     public function GetChild2 ()
     {
-        $this->Handle->get_child2 ();
+        $child2 = $this->Handle->get_child2 ();
+
+        return $child2->get_data (self::TOBJECT);
     }
 
     public function GetPosition ()
     {
-        $this->Handle->get_position ();
+        return $this->Handle->get_position ();
     }
 
-    public function Pack1 (TWidget $child, /* bool */ $resize = false, /* bool */ $shrink = true)
+    public function Pack1 (TWidget $child, /* bool */ $resize = true, /* bool */ $shrink = true)
     {
         $this->Handle->pack1 ($child->Handle, $resize, $shrink);
     }
 
-    public function Pack2 (TWidget $child, /* bool */ $resize = false, /* bool */ $shrink = true)
+    public function Pack2 (TWidget $child, /* bool */ $resize = true, /* bool */ $shrink = true)
     {
         $this->Handle->pack2 ($child->Handle, $resize, $shrink);
     }
@@ -111,6 +115,8 @@ abstract class TPaned extends TContainer
     {
         switch ($var)
         {
+        case 'Child1':   { $this->Add1 ($val);         break; }
+        case 'Child2':   { $this->Add2 ($val);         break; }
         case 'Position': { $this->SetPosition ($val);  break; }
         default:         { parent::__set ($var, $val);        }
         }

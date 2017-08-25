@@ -168,9 +168,11 @@ class TTreeViewColumn extends TObject
         return $this->Handle->get_spacing ();
     }
 
-    public function getTitle ()
+    public function GetTitle ()
     {
-        return $this->Handle->get_title ();
+        $result = $this->Handle->get_title ();
+
+        return $this->utf8 ($result);
     }
 
     public function GetVisible ()
@@ -271,6 +273,11 @@ class TTreeViewColumn extends TObject
     public function SetWidget (TWidget $widget)
     {
         $this->Handle->set_widget ($widget->Handle);
+    }
+
+    public function QueueResize ()
+    {
+        $this->Handle->queue_resize ();
     }
 
     /**

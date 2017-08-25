@@ -65,7 +65,7 @@ class TCellRendererToggle extends TCellRenderer
 
     public function GetRadio ()
     {
-        return $this->handle->get_radio ();
+        return $this->Handle->get_radio ();
     }
 
     public function SetActivatable (bool $value)
@@ -80,7 +80,7 @@ class TCellRendererToggle extends TCellRenderer
 
     public function SetRadio (bool $value)
     {
-        $this->handle->set_radio ($value);
+        $this->Handle->set_radio ($value);
     }
 
     /**

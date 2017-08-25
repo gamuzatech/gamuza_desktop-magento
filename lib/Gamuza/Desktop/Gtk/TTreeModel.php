@@ -41,9 +41,9 @@ trait TTreeModel // extends TInterface
     /**
      * Methods
      */
-    public function Children (callback $callback_func)
+    public function Children (callback $callback_func, mixed $user_data)
     {
-        $this->Handle->for_each ($callback_func);
+        $this->Handle->for_each ($callback_func, $user_data);
     }
 
     public function GetColumnType (int $column)
@@ -86,9 +86,11 @@ trait TTreeModel // extends TInterface
         return $this->Handle->get_string_from_iter ($iter);
     }
 
-    public function GetValue (TTreeIter $iter, int $column)
+    public function GetValue (TTreeIter $iter, int $n_column)
     {
-        return $this->Handle->get_value ($iter, $column);
+        $result = $this->Handle->get_value ($iter, $n_column);
+
+        return is_string ($result) ? $this->utf8 ($result) : $result;
     }
 
     public function IterChildren (TTreeIter $parent)

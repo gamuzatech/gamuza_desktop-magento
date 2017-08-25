@@ -28,6 +28,31 @@
  */
 
 /**
+ * Class GamuzaDialog
+ */
+class GamuzaDialog extends GtkDialog
+{
+    public function __construct (array $args)
+    {
+        if (count ($args ['args']) > 0)
+        {
+            $args = $args ['args'];
+
+            if (!empty ($args [1]))
+            {
+                $parent = $args [1];
+
+                $args [1] = $parent->Handle;
+            }
+
+            return call_user_func_array ('parent::__construct', $args);
+        }
+
+        parent::__construct ();
+    }
+}
+
+/**
  * Class TDialog
  *
  * @property int  $DefaultResponse
@@ -47,11 +72,12 @@ class TDialog extends TWindow
     /**
      * Events
      */
-    public function __construct (/* [string $title = null [, TWidget $parent_window = null [, TDialogFlags $dialog_flags = 0 [, array (TButton, TResponseType)]]]] */)
+    public function __construct (string $title = null, TWindow $parent = null, TDialogFlags $flags = null
+                                 /* [ string $first_button_text = null, TResponseType $response_type = null ], ... */)
     {
         TBin::__construct ();
 
-        $this->Handle = new GtkDialog (/* $title, $parent_window, $dialog_flags, array () */);
+        $this->Handle = new GamuzaDialog (array ('args' => func_get_args ()) /* $title, $parent, $flags, ... */);
 
         self::__gui ();
 
@@ -61,6 +87,8 @@ class TDialog extends TWindow
     public function __gui ()
     {
         TBin::__gui ();
+
+        $this->Modal = true;
 
         $this->ActionArea = new THButtonBox ();
         $this->ActionArea->Handle = $this->Handle->action_area;
@@ -103,16 +131,11 @@ class TDialog extends TWindow
         return $this->Handle->get_has_separator ();
     }
 
-    public function GetVBox ()
-    {
-        return $this->Handle->vbox->get_data (self::TOBJECT);
-    }
-
-    public function PackStart (TWidget $widget)
+    public function PackStart (TWidget $widget, /* bool */ $expand = true, /* bool */ $fill = true, /* int */ $padding = 0)
     {
         $widget->Parent = $this;
 
-        $this->Handle->vbox->pack_start ($widget->Handle);
+        $this->ContentArea->PackStart ($widget, $expand, $fill, $padding);
     }
 
     public function Response (int $response_id)

@@ -73,7 +73,7 @@ class TListStore extends System\TObject
      */
     public function Append (array $items = null)
     {
-        if (!empty ($items))
+        if (is_array ($items) && count ($items) > 0)
         {
             $result = array ();
             foreach ($items as $_item)

@@ -28,12 +28,29 @@
  */
 
 /**
+ * Class GamuzaWindow
+ */
+class GamuzaWindow extends GtkWindow
+{
+    public function __construct (TWindowType $type = null)
+    {
+        if ($type !== null)
+        {
+            return call_user_func ('parent::__construct', $type);
+        }
+
+        parent::__construct ();
+    }
+}
+
+/**
  * Class TWindow
  *
  * @property TAccelGroup       $AccelGroup
  * @property bool              $AcceptFocus
  * @property bool              $AutoStartupNotification
  * @property bool              $Decorated
+ * @property bool              $Deletable
  * @property TWidget           $Default
  * @property GdkPixbuf         $DefaultIcon
  * @property array             $DefaultSize
@@ -82,11 +99,11 @@ class TWindow extends TBin
     public $OnClose;
     public $OnCloseQuery;
 
-    public function __construct (/* [ TWindowType $type = Gtk::WINDOW_TOPLEVEL ] */)
+    public function __construct (TWindowType $type = null)
     {
         parent::__construct ();
 
-        $this->Handle = new GtkWindow (/* $type */);
+        $this->Handle = new GamuzaWindow ($type);
 
         self::__gui ();
 
@@ -129,12 +146,18 @@ class TWindow extends TBin
     {
         $this->_call_user_func ($this, $this->OnClose);
 
-        if ($this->Owner->MainWindow == $this) Gtk::main_quit ();
+        if ($this->Owner instanceof TApplication && $this->Owner->MainWindow === $this)
+        {
+            Gtk::main_quit ();
+        }
     }
 
     public function __on_focus_in_event (GObject $sender, array $event, array $data)
     {
-        $this->Owner->ActiveWindow = $this;
+        if ($this->Owner instanceof TApplication)
+        {
+            $this->Owner->ActiveWindow = $this;
+        }
     }
 
     /**
@@ -228,6 +251,11 @@ class TWindow extends TBin
     public function GetDecorated ()
     {
         return $this->Handle->get_decorated ();
+    }
+
+    public function GetDeletable ()
+    {
+        return $this->Handle->get_deletable ();
     }
 
     public function GetDefaultSize ()
@@ -415,6 +443,11 @@ class TWindow extends TBin
         $this->Handle->set_decorated ($decorated);
     }
 
+    public function SetDeletable (bool $deletable)
+    {
+        $this->Handle->set_deletable ($deletable);
+    }
+
     public function SetDefault (TWidget $default_widget)
     {
         $this->Handle->set_default ($default_widget->Handle);
@@ -596,6 +629,7 @@ class TWindow extends TBin
         case 'AcceptFocus':       { $result = $this->GetAcceptFocus ();       break; }
         case 'AccelGroup':        { $result = $this->GetAccelGroup ();        break; }
         case 'Decorated':         { $result = $this->GetDecorated ();         break; }
+        case 'Deletable':         { $result = $this->GetDeletable ();         break; }
         case 'DefaultSize':       { $result = $this->GetDefaultSize ();       break; }
         case 'DestroyWithParent': { $result = $this->GetDestroyWithParent (); break; }
         case 'Focus':             { $result = $this->GetFocus ();             break; }
@@ -631,6 +665,7 @@ class TWindow extends TBin
         case 'AcceptFocus':             { $this->SetAcceptFocus ($val);             break; }
         case 'AutoStartupNotification': { $this->SetAutoStartupNotification ($val); break; }
         case 'Decorated':               { $this->SetDecorated ($val);               break; }
+        case 'Deletable':               { $this->SetDeletable ($val);               break; }
         case 'Default':                 { $this->SetDefault ($val);                 break; }
         case 'DefaultIcon':             { $this->SetDefaultIcon ($val);             break; }
         case 'DefaultSize':

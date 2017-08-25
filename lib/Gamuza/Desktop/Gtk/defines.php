@@ -104,6 +104,7 @@
     define ('bbxEdge',         Gtk::BUTTONBOX_EDGE);
     define ('bbxStart',        Gtk::BUTTONBOX_START);
     define ('bbxEnd',          Gtk::BUTTONBOX_END);
+    define ('bbxCenter',       Gtk::BUTTONBOX_CENTER);
 }
 
 // enum TButtonsType

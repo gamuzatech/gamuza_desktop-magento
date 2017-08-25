@@ -98,16 +98,16 @@ class TAssistant extends TWindow
         $this->Connect ('prepare', array ($this, '__on_prepare'));
     }
 
-    public function __on_close ($object, array $event)
+    public function __on_close ($object)
     {
-        $this->_call_user_func ($this, $this->OnClose, $event);
+        $this->_call_user_func ($this, $this->OnClose);
     }
 
-    public function __on_prepare ($object, $page, array $event)
+    public function __on_prepare ($object, $page)
     {
         $tobject = $page->get_data (self::TOBJECT);
 
-        $this->_call_user_func ($this, $this->OnPrepare, $tobject, $event);
+        $this->_call_user_func ($this, $this->OnPrepare, $tobject);
     }
 
     /**

@@ -913,11 +913,11 @@ abstract class TWidget extends TObject
     }
 
     /**
-     * Child Packing
+     * BOX Child Packing
      */
     public function GetExpanded ()
     {
-        if ($this->Parent && $this->Parent instanceof TBox)
+        if ($this->Parent instanceof TBox)
         {
             $result = $this->Parent->QueryChildPacking ($this);
 
@@ -927,7 +927,7 @@ abstract class TWidget extends TObject
 
     public function GetFilled ()
     {
-        if ($this->Parent && $this->Parent instanceof TBox)
+        if ($this->Parent instanceof TBox)
         {
             $result = $this->Parent->QueryChildPacking ($this);
 
@@ -937,7 +937,7 @@ abstract class TWidget extends TObject
 
     public function GetPackType ()
     {
-        if ($this->Parent && $this->Parent instanceof TBox)
+        if ($this->Parent instanceof TBox)
         {
             $result = $this->Parent->QueryChildPacking ($this);
 
@@ -947,7 +947,7 @@ abstract class TWidget extends TObject
 
     public function GetPadded ()
     {
-        if ($this->Parent && $this->Parent instanceof TBox)
+        if ($this->Parent instanceof TBox)
         {
             $result = $this->Parent->QueryChildPacking ($this);
 
@@ -957,7 +957,7 @@ abstract class TWidget extends TObject
 
     public function SetExpanded (bool $expanded)
     {
-        if ($this->Parent && $this->Parent instanceof TBox)
+        if ($this->Parent instanceof TBox)
         {
             $this->Parent->setChildPacking ($this, $expanded, $this->Filled, $this->Padded, $this->PackType);
         }
@@ -965,7 +965,7 @@ abstract class TWidget extends TObject
 
     public function SetFilled (bool $filled)
     {
-        if ($this->Parent && $this->Parent instanceof TBox)
+        if ($this->Parent instanceof TBox)
         {
             $this->Parent->setChildPacking ($this, $this->Expanded, $filled, $this->Padded, $this->PackType);
         }
@@ -973,7 +973,7 @@ abstract class TWidget extends TObject
 
     public function SetPackType (bool $pack_type)
     {
-        if ($this->Parent && $this->Parent instanceof TBox)
+        if ($this->Parent instanceof TBox)
         {
             $this->Parent->SetChildPacking ($this, $this->Expanded, $this->Filled, $this->Padded, $pack_type);
         }
@@ -981,15 +981,18 @@ abstract class TWidget extends TObject
 
     public function SetPadded (bool $padded)
     {
-        if ($this->Parent && $this->Parent instanceof TBox)
+        if ($this->Parent instanceof TBox)
         {
             $this->Parent->SetChildPacking ($this, $this->Expanded, $this->Filled, $padded, $this->PackType);
         }
     }
 
+    /**
+     * TABLE Child Packing
+     */
     public function SetAttachOptions (array $options)
     {
-        if ($this->Parent && $this->Parent instanceof TTable)
+        if ($this->Parent instanceof TTable)
         {
             $this->Parent->Attach (
                 $this,

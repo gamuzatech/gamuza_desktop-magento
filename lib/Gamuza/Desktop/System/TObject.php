@@ -79,7 +79,7 @@ class TObject
     {
         $caller = array ($this, '__on_event');
 
-        $handler_id = $this->Connect ($signal, $caller, $callback);
+        $handler_id = $this->Connect ($signal, $caller, $event);
 
         $this->_events [$event] = array (
             self::EVENT_SIGNAL   => $signal,
@@ -87,6 +87,8 @@ class TObject
             self::EVENT_CALLBACK => $callback,
             self::EVENT_HANDLER  => $handler_id
         );
+
+        return $handler_id;
     }
 
     public function __disconnect ($var)
@@ -120,10 +122,20 @@ class TObject
         }
         else
         {
-            if (!strcmp ($method, 'get')) return $this->GetProperty ($var);
-
-            else $this->SetProperty ($var, $val);
+            return $this->__property ($var, $val, $method);
         }
+    }
+
+    public function __property ($var, $val, $method = 'set')
+    {
+        // echo 'Property : ' . $var . ' : ' . $val . PHP_EOL;
+
+        if (!strcmp ($method, 'get') && isset ($this->_properties [$var]))
+        {
+            return $this->_properties [$var];
+        }
+
+        $this->_properties [$var] = $val;
     }
 
     public function __gui ()
@@ -138,15 +150,15 @@ class TObject
 
     public function __on_event ()
     {
-        $last = ($num = func_num_args ()) - 1;
+        $last    = ($num = func_num_args ()) - 1;
         $gobject = func_get_arg (0);
-        $event   = func_get_arg ($last);
+        $event   = func_get_arg ($last); // user_data
 
-        $args = array ($this, $event [self::EVENT_CALLBACK]);
+        $args = array ($this, $this->_events [$event][self::EVENT_CALLBACK]);
 
         for ($i = 1; $i < $last; $i ++)
         {
-            $args [] = func_get_arg ($i);
+            $args [] = func_get_arg ($i); // extra_params
         }
 
         call_user_func_array (array ($this, '_call_user_func'), $args);
@@ -162,30 +174,22 @@ class TObject
 
     public function Connect (/* string */ $signal, /* callback */ $callback /* , mixed $user_param */ )
     {
-        $args = func_get_args ();
-
-        return $this->Handle->connect ($signal, $callback, $args);
+        return call_user_func_array (array ($this->Handle, 'connect'), func_get_args ());
     }
 
     public function ConnectAfter (/* string */ $signal, /* callback */ $callback /* , mixed $user_param */ )
     {
-        $args = func_get_args ();
-
-        return $this->Handle->connect_after ($signal, $callback, $args);
+        return call_user_func_array (array ($this->Handle, 'connect_after'), func_get_args ());
     }
 
     public function ConnectSimple (/* string */ $signal, /* callback */ $callback /* , mixed $user_param */ )
     {
-        $args = func_get_args ();
-
-        return $this->Handle->connect_simple ($signal, $callback, $args);
+        return call_user_func_array (array ($this->Handle, 'connect_simple'), func_get_args ());
     }
 
     public function ConnectSimpleAfter (/* string */ $signal, /* callback */ $callback /* , mixed $user_param */ )
     {
-        $args = func_get_args ();
-
-        return $this->Handle->connect_simple_after ($signal, $callback, $args);
+        return call_user_func_array (array ($this->Handle, 'connect_simple_after'), func_get_args ());
     }
 
     public function Disconnect (/* int */ $handler_id)
@@ -208,19 +212,25 @@ class TObject
         return $this->Handle->get_data ($key);
     }
 
-    public function getHandle ()
+    public function GetEvent (/* string */ $name, /* int */ $index = null)
+    {
+        if (!empty ($this->_events [$name]))
+        {
+            $event = $this->_events [$name];
+            if (empty ($index)) return $event;
+
+            return $event [$index];
+        }
+    }
+
+    public function GetHandle ()
     {
         return $this->_handle;
     }
 
     public function GetProperty (/* string */ $property_name)
     {
-        // return $this->Handle->get_property ($property_name);
-
-        if (array_key_exists ($property_name, $this->_properties))
-        {
-            return $this->_properties [$property_name];
-        }
+        return $this->Handle->get_property ($property_name);
     }
 
     public function IsConnected (/* int */ $handler_id)
@@ -257,9 +267,7 @@ class TObject
 
     public function SetProperty (/* string */ $property_name, /* mixed */ $value)
     {
-        // $this->Handle->set_property ($property_name, $value);
-
-        $this->_properties [$property_name] = $value;
+        $this->Handle->set_property ($property_name, $value);
     }
 
     public static function SignalListIDs (/* int */ $gtype)
@@ -483,7 +491,7 @@ class TObject
 
         switch ($var)
         {
-        case 'Handle': { $result = $this->getHandle ();                break;     }
+        case 'Handle': { $result = $this->GetHandle ();                break;     }
         default:       { $result = $this->__event ($var, null, 'get'); /* rest */ }
         }
 
@@ -494,7 +502,7 @@ class TObject
     {
         switch ($var)
         {
-        case 'Handle': { $this->setHandle ($val);            break;     }
+        case 'Handle': { $this->SetHandle ($val);            break;     }
         default:       { $this->__event ($var, $val, 'set'); /* rest */ }
         }
     }

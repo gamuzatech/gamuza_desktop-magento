@@ -105,6 +105,7 @@ abstract class TButtonBoxStyle
     const bbxEdge         = Gtk::BUTTONBOX_EDGE;
     const bbxStart        = Gtk::BUTTONBOX_START;
     const bbxEnd          = Gtk::BUTTONBOX_END;
+    const bbxCenter       = Gtk::BUTTONBOX_CENTER;
 }
 
 abstract class TButtonsType
