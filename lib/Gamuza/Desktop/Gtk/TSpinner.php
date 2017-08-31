@@ -28,53 +28,31 @@
  */
 
 /**
- * Error reporting
+ * Class TSpinner
  */
-ini_set ('display_errors', 1);
-ini_set ('error_reporting', E_ALL);
-
-/**
- * Startup configuration
- */
-chdir (dirname (__FILE__));
-
-define ('MAGENTO_ROOT', getcwd ());
-define ('D_S', DIRECTORY_SEPARATOR);
-
-@ include MAGENTO_ROOT . D_S . 'includes' . D_S . 'config.php';
-@ include MAGENTO_ROOT . D_S . 'app' . D_S . 'bootstrap.php';
-require   MAGENTO_ROOT . D_S . 'app' . D_S . 'Mage.php';
-require   MAGENTO_ROOT . D_S . 'app' . D_S . 'Desktop.php';
-
-# Varien_Profiler::enable ();
-
-global $Application;
-global $Welcome;
-
-try
+class TSpinner extends TDrawingArea
 {
-    $Application->Init ();
-
-    /*
-    if (!Mage::isInstalled ())
+    /**
+     * Events
+     */
+    public function __construct ()
     {
-        echo 'Gamuza Desktop is not installed yet, please complete install wizard first.' . PHP_EOL;
+        parent::__construct ();
 
-        exit (1);
+        $this->Handle = new GtkSpinner ();
     }
-    */
 
-    $Welcome = $Application->CreateWindow ('desktop/welcome');
-    $Welcome->Show ();
+    /**
+     * Methods
+     */
+    public function Start ()
+    {
+        $this->Handle->start ();
+    }
 
-    $Application->Run ();
-}
-catch (Exception $e)
-{
-    $Application->ShowException ($e);
-
-    // echo ' ! Application Exception : ' . $e->getMessage () . PHP_EOL;
-
-    // exit (1);
+    public function Stop ()
+    {
+        $this->Handle->stop ();
+    }
 }
 

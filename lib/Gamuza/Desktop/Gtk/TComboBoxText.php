@@ -28,64 +28,76 @@
  */
 
 /**
- * Class TFileSelection
- *
- * @property string $Filename
- * @property bool   $SelectMultiple
+ * Class GamuzaComboBoxText
  */
-class TFileSelection extends TDialog
+class GamuzaComboBoxText extends GtkComboBoxText
 {
+    public function __construct (GtkTreeModel $model = null)
+    {
+        if (!empty ($model))
+        {
+            return call_user_func ('parent::__construct', $model);
+        }
+
+        parent::__construct ();
+    }
+}
+
+/**
+ * Class TComboBoxText
+ *
+ * @property string $ActiveText
+ */
+class TComboBoxText extends TComboBox
+{
+    use TCellLayout;
+
     /**
      * Events
      */
-    public function __construct (string $title = null)
+    public function __construct (TTreeModel $model = null)
     {
         parent::__construct ();
 
-        $this->Handle = new GtkFileSelection ($title);
+        $this->Handle = new GamuzaComboBoxText ($model ? $model->Handle : null);
     }
 
     /**
      * Methods
      */
-    public function Complete (string $pattern)
+    public static function NewText ()
     {
-        $this->Handle->complete ($pattern);
+        return GtkComboBoxText::new_text ();
     }
 
-    public function GetFilename ()
+    public static function NewWithModel (TTreeModel $model, $text_column)
     {
-        return $this->Handle->get_filename ();
+        return GtkComboBoxText::new_with_model ($model->Handle, text_column);
     }
 
-    public function GetSelectMultiple ()
+    public function AppendText (string $text)
     {
-        return $this->Handle->get_select_multiple ();
+        $this->Handle->append_text ($text);
     }
 
-    public function GetSelections ()
+    public function GetActiveText ()
     {
-        return $this->Handle->get_selections ();
+        return $this->Handle->get_active_text ();
     }
 
-    public function HideFileopButtons ()
+    public function InsertText (int $position, string $text)
     {
-        $this->Handle->hide_fileop_buttons ();
+        $this->Handle->insert_text ($position, $text);
     }
 
-    public function SetFilename (string $filename)
+    public function PrependText (string $text)
     {
-        $this->Handle->set_filename ($filename);
+        $this->Handle->prepend_text ($text);
     }
 
-    public function SetSelectMultiple (bool $select_multiple)
+    public function Remove (int $position)
     {
-        $this->Handle->set_select_multiple ($select_multiple);
-    }
-
-    public function ShowFileopButtons ()
-    {
-        $this->Handle->show_fileop_buttons ();
+        $this->Handle->remove ($position);
     }
 
     /**
@@ -97,10 +109,8 @@ class TFileSelection extends TDialog
 
         switch ($var)
         {
-        case 'Filename':       { $result = $this->GetFilename ();       break; }
-        case 'SelectMultiple': { $result = $this->GetSelectMultiple (); break; }
-        case 'Selections':     { $result = $this->GetSelections ();     break; }
-        default:               { $result = parent::__get ($var);               }
+            case 'ActiveText': { $result = $this->GetActiveText (); break; }
+            default:           { $result = parent::__get ($var);           }
         }
 
         return $result;
@@ -110,9 +120,7 @@ class TFileSelection extends TDialog
     {
         switch ($var)
         {
-        case 'Filename':       { $this->SetFilename ($val);       break; }
-        case 'SelectMultiple': { $this->SetSelectMultiple ($val); break; }
-        default:               { parent::__set ($var, $val);             }
+            default: { parent::__set ($var, $val); }
         }
     }
 }
